@@ -2,16 +2,55 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CircleDollarSign, CircleCheck } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 
-// Comparison data for USD to INR
+// Updated comparison data with new columns
 const comparisonData = [
-  { provider: 'InstantGlobe', rate: 83.12, fees: 0, deliveryTime: '10 minutes', highlight: true },
-  { provider: 'Wise', rate: 82.67, fees: 3.50, deliveryTime: '1-2 days', highlight: false },
-  { provider: 'Remitly', rate: 82.45, fees: 2.99, deliveryTime: '3-5 days', highlight: false },
-  { provider: 'WorldRemit', rate: 82.12, fees: 3.99, deliveryTime: '1-3 days', highlight: false },
-  { provider: 'Western Union', rate: 81.75, fees: 4.99, deliveryTime: '1-5 days', highlight: false },
-  { provider: 'Banks (Avg)', rate: 80.40, fees: 25.00, deliveryTime: '3-5 days', highlight: false },
+  { 
+    provider: 'Our Service', 
+    exchangeRate: 'Google Forex Rate', 
+    fees: 'Zero Fees', 
+    transferTime: 'Instant', 
+    rateTransparency: true, 
+    stablecoinPowered: true, 
+    highlight: true 
+  },
+  { 
+    provider: 'Wise', 
+    exchangeRate: '0.5-1% below Google', 
+    fees: '$3-9 per transfer', 
+    transferTime: '1-2 days', 
+    rateTransparency: true, 
+    stablecoinPowered: false, 
+    highlight: false 
+  },
+  { 
+    provider: 'Remitly', 
+    exchangeRate: '1-1.5% below Google', 
+    fees: '$3.99 per transfer', 
+    transferTime: '3-5 days', 
+    rateTransparency: false, 
+    stablecoinPowered: false, 
+    highlight: false 
+  },
+  { 
+    provider: 'Western Union', 
+    exchangeRate: '1.5-2% below Google', 
+    fees: '$5-10 per transfer', 
+    transferTime: '2-3 days', 
+    rateTransparency: false, 
+    stablecoinPowered: false, 
+    highlight: false 
+  },
+  { 
+    provider: 'Banks', 
+    exchangeRate: '3-4% below Google', 
+    fees: '$25-45 per transfer', 
+    transferTime: '3-5 days', 
+    rateTransparency: false, 
+    stablecoinPowered: false, 
+    highlight: false 
+  },
 ];
 
 const RateComparisonSection = () => {
@@ -19,31 +58,27 @@ const RateComparisonSection = () => {
     <section className="py-16 relative overflow-hidden">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4">
             How We <span className="text-indigo-400">Compare</span>
           </h2>
-          <p className="text-gray-300 max-w-2xl mx-auto">
-            See how our rates stack up against other money transfer services. We offer the best exchange rates with zero fees.
+          <p className="text-gray-300 max-w-3xl mx-auto text-lg">
+            See how our service stacks up against traditional remittance options.
           </p>
         </div>
         
         <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <Card className="shadow-lg border-indigo-500/20 bg-gradient-to-br from-indigo-950/70 to-theme-dark/90 backdrop-blur-sm overflow-hidden w-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center">
-                <CircleDollarSign className="mr-2 text-indigo-400 h-5 w-5" />
-                USD → INR Rate Comparison
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow className="border-b border-white/10">
-                      <TableHead className="text-indigo-300">Provider</TableHead>
-                      <TableHead className="text-indigo-300 text-right">Rate</TableHead>
-                      <TableHead className="text-indigo-300 text-right">Fees</TableHead>
-                      <TableHead className="text-indigo-300">Delivery Time</TableHead>
+                      <TableHead className="text-indigo-300 py-6 text-base">Service</TableHead>
+                      <TableHead className="text-indigo-300 py-6 text-base">Exchange Rate</TableHead>
+                      <TableHead className="text-indigo-300 py-6 text-base">Fees</TableHead>
+                      <TableHead className="text-indigo-300 py-6 text-base">Transfer Time</TableHead>
+                      <TableHead className="text-indigo-300 py-6 text-base">Rate Transparency</TableHead>
+                      <TableHead className="text-indigo-300 py-6 text-base">Stablecoin Powered</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -52,26 +87,29 @@ const RateComparisonSection = () => {
                         key={item.provider} 
                         className={`border-b border-white/10 hover:bg-indigo-500/5 ${item.highlight ? 'bg-indigo-500/10' : ''}`}
                       >
-                        <TableCell className={`font-medium ${item.highlight ? 'text-indigo-400' : ''}`}>
-                          {item.highlight && <CircleCheck className="inline-block mr-1.5 h-4 w-4 text-indigo-400" />}
+                        <TableCell className={`font-medium py-6 ${item.highlight ? 'text-indigo-400 text-lg' : ''}`}>
                           {item.provider}
                         </TableCell>
-                        <TableCell className="text-right">₹{item.rate.toFixed(2)}</TableCell>
-                        <TableCell className="text-right">
-                          {item.fees === 0 ? (
-                            <span className="text-indigo-400">Free</span>
-                          ) : (
-                            `$${item.fees.toFixed(2)}`
-                          )}
+                        <TableCell className="py-6">{item.exchangeRate}</TableCell>
+                        <TableCell className="py-6">{item.fees}</TableCell>
+                        <TableCell className="py-6">{item.transferTime}</TableCell>
+                        <TableCell className="py-6">
+                          {item.rateTransparency ? 
+                            <CheckCircle className="h-6 w-6 text-green-500" /> : 
+                            <XCircle className="h-6 w-6 text-red-500" />}
                         </TableCell>
-                        <TableCell>{item.deliveryTime}</TableCell>
+                        <TableCell className="py-6">
+                          {item.stablecoinPowered ? 
+                            <CheckCircle className="h-6 w-6 text-green-500" /> : 
+                            <XCircle className="h-6 w-6 text-red-500" />}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </div>
-              <div className="mt-3 text-xs text-gray-400">
-                *Rates and fees are for comparison purposes only and may vary based on amount and payment method.
+              <div className="p-6 text-xs text-gray-400">
+                *Exchange rates and fees are for comparison purposes only and may vary based on amount and payment method.
               </div>
             </CardContent>
           </Card>
