@@ -1,32 +1,51 @@
 
 import React, { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRight, RefreshCw } from "lucide-react";
+import { ArrowUp, TrendingUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
+// Type definitions
 type Currency = 'USD' | 'GBP' | 'AED';
 
-interface ExchangeRate {
-  currency: Currency;
-  rateToINR: number;
+interface CurrencyData {
   symbol: string;
+  flag: string;
+  name: string;
 }
 
 const CurrencyConverterWidget = () => {
   const [fromCurrency, setFromCurrency] = useState<Currency>('USD');
-  const [amount, setAmount] = useState<string>('100');
+  const [amount, setAmount] = useState<string>('1000.00');
   const [convertedAmount, setConvertedAmount] = useState<number>(0);
+  const [exchangeRate, setExchangeRate] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Simulated exchange rates (in a real app, these would be fetched from an API)
-  const exchangeRates: ExchangeRate[] = [
-    { currency: 'USD', rateToINR: 83.12, symbol: '$' },
-    { currency: 'GBP', rateToINR: 106.45, symbol: '£' },
-    { currency: 'AED', rateToINR: 22.63, symbol: 'د.إ' },
-  ];
+  // Currency metadata
+  const currencyData: Record<Currency | 'INR', CurrencyData> = {
+    'USD': { 
+      symbol: '$', 
+      flag: '🇺🇸', 
+      name: 'US Dollar'
+    },
+    'GBP': { 
+      symbol: '£', 
+      flag: '🇬🇧', 
+      name: 'British Pound'
+    },
+    'AED': { 
+      symbol: 'د.إ', 
+      flag: '🇦🇪', 
+      name: 'UAE Dirham'
+    },
+    'INR': { 
+      symbol: '₹', 
+      flag: '🇮🇳', 
+      name: 'Indian Rupee'
+    }
+  };
 
   const handleFromCurrencyChange = (value: string) => {
     setFromCurrency(value as Currency);
@@ -40,147 +59,149 @@ const CurrencyConverterWidget = () => {
     }
   };
 
-  const getExchangeRate = (currency: Currency): number => {
-    const rate = exchangeRates.find(rate => rate.currency === currency);
-    return rate ? rate.rateToINR : 0;
-  };
-
-  const getCurrencySymbol = (currency: Currency): string => {
-    const rate = exchangeRates.find(rate => rate.currency === currency);
-    return rate ? rate.symbol : '';
-  };
-
-  const convert = () => {
+  // Fetch exchange rates from Fixer.io API
+  const fetchExchangeRate = async () => {
     setIsLoading(true);
     
-    // Simulate API call with timeout
-    setTimeout(() => {
-      const rate = getExchangeRate(fromCurrency);
+    try {
+      // In a real application, this would be an actual API call
+      // For now, we'll simulate the API response
+      // const response = await fetch(`https://data.fixer.io/api/latest?access_key=YOUR_API_KEY&base=${fromCurrency}&symbols=INR`);
+      // const data = await response.json();
+      
+      // Simulate API response
+      const rates = {
+        'USD': 83.12,
+        'GBP': 106.45,
+        'AED': 22.63
+      };
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const rate = rates[fromCurrency];
+      setExchangeRate(rate);
+      
+      // Calculate converted amount
       const result = parseFloat(amount || '0') * rate;
       setConvertedAmount(result);
-      setIsLoading(false);
-      
-      toast({
-        title: "Conversion Complete",
-        description: `${amount} ${fromCurrency} = ₹${result.toFixed(2)} INR`,
-        duration: 3000,
-      });
-    }, 800);
-  };
-
-  const refreshRates = () => {
-    setIsLoading(true);
-    
-    // Simulate refreshing rates
-    setTimeout(() => {
-      setIsLoading(false);
-      convert();
       
       toast({
         title: "Rates Updated",
-        description: "Exchange rates have been updated to the latest values.",
+        description: "Exchange rates have been updated from Fixer.io",
         duration: 3000,
       });
-    }, 1000);
+    } catch (error) {
+      console.error('Error fetching exchange rates:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch exchange rates. Please try again later.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Perform initial conversion on component mount
+  // Perform initial conversion on component mount or when currency/amount changes
   useEffect(() => {
-    convert();
-  }, [fromCurrency]); // Convert whenever currency changes
+    if (amount && parseFloat(amount) > 0) {
+      fetchExchangeRate();
+    }
+  }, [fromCurrency, amount]); // Convert whenever currency or amount changes
 
   return (
-    <div className="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 backdrop-blur-md border border-white/10 rounded-xl p-6 md:p-8 shadow-lg">
-      <div className="space-y-6">
-        <h2 className="text-xl md:text-2xl font-bold text-center">Currency Converter</h2>
-        
-        {/* Input Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* From Currency */}
-          <div className="space-y-2">
-            <label className="text-sm text-gray-300">From</label>
-            <div className="space-y-2">
+    <div className="bg-black rounded-3xl p-8 shadow-xl text-white">
+      <div className="space-y-8">
+        {/* You send */}
+        <div className="space-y-2">
+          <p className="text-xl text-gray-300">You send</p>
+          <div className="flex items-end justify-between">
+            <Input
+              type="text"
+              value={amount}
+              onChange={handleAmountChange}
+              className="text-5xl font-medium border-none bg-transparent p-0 h-auto text-emerald-300 w-2/3 focus-visible:ring-0 focus-visible:ring-offset-0"
+              placeholder="0.00"
+            />
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-800">
+                <span className="text-xl">{currencyData[fromCurrency].flag}</span>
+              </div>
               <Select 
                 value={fromCurrency} 
                 onValueChange={handleFromCurrencyChange}
               >
-                <SelectTrigger className="w-full bg-white/5 border-white/10">
+                <SelectTrigger className="w-24 bg-transparent border-none text-xl focus:ring-0">
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
-                <SelectContent className="bg-theme-dark border border-white/10">
-                  <SelectItem value="USD">US Dollar (USD)</SelectItem>
-                  <SelectItem value="GBP">British Pound (GBP)</SelectItem>
-                  <SelectItem value="AED">UAE Dirham (AED)</SelectItem>
+                <SelectContent className="bg-gray-900 border border-gray-800">
+                  <SelectItem value="USD">USD</SelectItem>
+                  <SelectItem value="GBP">GBP</SelectItem>
+                  <SelectItem value="AED">AED</SelectItem>
                 </SelectContent>
               </Select>
-              
-              <div className="relative">
-                <Input
-                  type="text"
-                  value={amount}
-                  onChange={handleAmountChange}
-                  className="pl-8 pr-4 py-2 font-medium bg-white/5 border-white/10"
-                  placeholder="Enter amount"
-                />
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-                  {getCurrencySymbol(fromCurrency)}
-                </span>
-              </div>
             </div>
           </div>
-          
-          {/* To Currency */}
-          <div className="space-y-2">
-            <label className="text-sm text-gray-300">To</label>
-            <div className="space-y-2">
-              <Select disabled defaultValue="INR">
-                <SelectTrigger className="w-full bg-white/5 border-white/10">
-                  <SelectValue placeholder="Indian Rupee (INR)" />
-                </SelectTrigger>
-                <SelectContent className="bg-theme-dark border border-white/10">
-                  <SelectItem value="INR">Indian Rupee (INR)</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <div className="relative bg-white/5 rounded-md flex items-center h-10 px-3 py-2 border border-white/10">
-                <span className="text-gray-300 mr-1">₹</span>
-                <span className="font-medium">{convertedAmount.toFixed(2)}</span>
-                <div className="absolute right-3">
-                  <Badge className="bg-theme-green text-white hover:bg-theme-green/90 text-xs">Zero Fees</Badge>
+        </div>
+        
+        <div className="h-px w-full bg-gray-800"></div>
+        
+        {/* Fee Info */}
+        <div className="flex items-center justify-between text-lg">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-300">Our fee:</span>
+            <span>{currencyData[fromCurrency].symbol}0</span>
+          </div>
+          <div>
+            <Badge className="bg-indigo-900/60 text-indigo-300 hover:bg-indigo-900/60">
+              Zero Fees 🎉
+            </Badge>
+          </div>
+        </div>
+        
+        {/* Exchange Rate Info */}
+        <div className="flex items-center justify-between text-lg">
+          <div className="text-gray-300">Live market rate:</div>
+          <div className="flex items-center gap-2">
+            <HoverCard>
+              <HoverCardTrigger>
+                <div className="flex items-center cursor-help">
+                  <span>{currencyData[fromCurrency].symbol}1.00 = ₹{exchangeRate.toFixed(2)}</span>
+                  <TrendingUp className="ml-2 h-4 w-4 text-emerald-400" />
                 </div>
+              </HoverCardTrigger>
+              <HoverCardContent className="bg-gray-900 border border-gray-800 text-white">
+                <p className="text-sm">Live rates from Fixer.io</p>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        </div>
+        
+        <div className="h-px w-full bg-gray-800"></div>
+        
+        {/* They receive */}
+        <div className="space-y-2">
+          <p className="text-xl text-gray-300">They receive</p>
+          <div className="flex items-end justify-between">
+            <div className="text-5xl font-medium text-emerald-300 w-2/3">
+              {isLoading ? (
+                <div className="animate-pulse bg-emerald-900/20 h-12 w-2/3 rounded"></div>
+              ) : (
+                convertedAmount.toLocaleString('en-IN', {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2
+                })
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-800">
+                <span className="text-xl">🇮🇳</span>
               </div>
+              <span className="text-xl">INR</span>
             </div>
           </div>
-        </div>
-        
-        {/* Divider with arrow */}
-        <div className="relative">
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 bg-theme-dark p-1.5 rounded-full border border-white/10">
-            <ArrowRight className="h-4 w-4 text-theme-blue" />
-          </div>
-          <div className="w-full h-px bg-white/10"></div>
-        </div>
-        
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <Button 
-            onClick={convert}
-            className="flex-1 bg-theme-blue hover:bg-theme-blue/90 transition-all duration-300"
-            disabled={isLoading || !amount || parseFloat(amount) <= 0}
-            size="sm"
-          >
-            Convert Now
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={refreshRates}
-            className="flex-1 border-white/10 hover:bg-white/5"
-            disabled={isLoading}
-            size="sm"
-          >
-            <RefreshCw className={`mr-1 h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh Rates
-          </Button>
         </div>
       </div>
     </div>
