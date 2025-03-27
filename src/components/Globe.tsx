@@ -28,7 +28,8 @@ const Globe: React.FC = () => {
   const globeRef = useRef<THREE.Mesh | null>(null);
   const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
   const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
-  const highlightedAreasRef = useRef<{[key: string]: THREE.Object3D}>({});
+  // Fix: Update the type definition to specifically store THREE.Mesh objects
+  const highlightedAreasRef = useRef<{[key: string]: THREE.Mesh}>({});
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -237,7 +238,9 @@ const Globe: React.FC = () => {
           const highlight = highlightedAreasRef.current[object.userData.location];
           if (highlight) {
             highlight.scale.set(1.2, 1.2, 1.2);
-            (highlight.material as THREE.MeshBasicMaterial).opacity = 0.9;
+            // Fix: Use type assertion to inform TypeScript this is a THREE.Material
+            const material = highlight.material as THREE.MeshBasicMaterial;
+            material.opacity = 0.9;
           }
           break;
         }
@@ -249,7 +252,9 @@ const Globe: React.FC = () => {
         // Reset all highlights to normal
         Object.values(highlightedAreasRef.current).forEach(highlight => {
           highlight.scale.set(1, 1, 1);
-          (highlight.material as THREE.MeshBasicMaterial).opacity = 0.8;
+          // Fix: Use type assertion to inform TypeScript this is a THREE.Material
+          const material = highlight.material as THREE.MeshBasicMaterial;
+          material.opacity = 0.8;
         });
       }
       
