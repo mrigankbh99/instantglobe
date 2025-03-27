@@ -11,7 +11,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-theme-dark">
+    <div className="min-h-screen overflow-x-hidden bg-theme-dark font-poppins">
       <Navbar />
       <HeroSection />
       <Footer />

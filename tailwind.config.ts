@@ -65,6 +65,9 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			fontFamily: {
+				'poppins': ['Poppins', 'sans-serif'],
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -136,10 +139,6 @@ export default {
         'fade-in': 'fade-in 0.5s ease-out',
         'rotate-slow': 'rotate-slow 20s linear infinite'
 			},
-      fontFamily: {
-        'sans': ['SF Pro Display', 'Helvetica', 'Arial', 'sans-serif'],
-        'mono': ['SF Mono', 'monospace']
-      },
       backdropBlur: {
         'xs': '2px',
       }
