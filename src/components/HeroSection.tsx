@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -27,6 +28,13 @@ const HeroSection = () => {
         duration: 5000,
       });
     }, 1000);
+  };
+  
+  const scrollToWaitlist = () => {
+    const waitlistSection = document.getElementById('waitlist-section');
+    if (waitlistSection) {
+      waitlistSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
   
   return (
@@ -67,7 +75,10 @@ const HeroSection = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-6 py-5 sm:px-8 sm:py-6 text-lg font-medium transition-all duration-300 transform hover:scale-105">
+            <Button 
+              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-6 py-5 sm:px-8 sm:py-6 text-lg font-medium transition-all duration-300 transform hover:scale-105"
+              onClick={scrollToWaitlist}
+            >
               Join Waitlist
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -168,40 +179,6 @@ const HeroSection = () => {
               <div className="lg:w-1/2">
                 <HomeConverterWidget />
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Waitlist Section */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 pb-20 animate-fade-in-up" style={{ animationDelay: '0.9s' }}>
-        <div className="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 backdrop-blur-md border border-white/10 rounded-xl p-6 md:p-8 mt-6">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Join Our Waitlist</h2>
-            <p className="text-gray-300 mb-6">Be the first to know when we launch. Get early access and exclusive offers.</p>
-            
-            <form onSubmit={handleWaitlistSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="flex-grow bg-white/10 border-white/20 text-white placeholder:text-gray-400"
-              />
-              <Button 
-                type="submit" 
-                className="bg-indigo-600 hover:bg-indigo-700 text-white"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Joining...' : 'Join Now'}
-                {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
-              </Button>
-            </form>
-            
-            <div className="mt-4 flex items-center justify-center text-sm text-gray-400">
-              <CheckCircle2 className="h-4 w-4 mr-2 text-indigo-400" />
-              <span>We'll never share your email with anyone else</span>
             </div>
           </div>
         </div>

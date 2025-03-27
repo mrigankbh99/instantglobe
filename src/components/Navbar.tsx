@@ -17,6 +17,15 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToWaitlist = () => {
+    const waitlistSection = document.getElementById('waitlist-section');
+    if (waitlistSection) {
+      waitlistSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    // Close mobile menu after clicking
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <header 
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -50,7 +59,10 @@ const Navbar = () => {
 
         {/* CTA Button */}
         <div className="hidden md:block">
-          <Button className="bg-theme-blue hover:bg-theme-blue/90 text-white rounded-full px-6 py-2 transition-all duration-300 transform hover:scale-105">
+          <Button 
+            className="bg-theme-blue hover:bg-theme-blue/90 text-white rounded-full px-6 py-2 transition-all duration-300 transform hover:scale-105"
+            onClick={scrollToWaitlist}
+          >
             Join Waitlist
           </Button>
         </div>
@@ -84,7 +96,10 @@ const Navbar = () => {
             <a href="#" className="block py-2 text-gray-300 hover:text-white">
               About Us
             </a>
-            <Button className="w-full bg-theme-blue hover:bg-theme-blue/90 text-white rounded-full py-2">
+            <Button 
+              className="w-full bg-theme-blue hover:bg-theme-blue/90 text-white rounded-full py-2"
+              onClick={scrollToWaitlist}
+            >
               Join Waitlist
             </Button>
           </div>
