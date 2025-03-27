@@ -28,7 +28,7 @@ const Globe: React.FC = () => {
   const globeRef = useRef<THREE.Mesh | null>(null);
   const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
   const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
-  const highlightedAreasRef = useRef<{[key: string]: THREE.Mesh}>({});
+  const highlightedAreasRef = useRef<{[key: string]: THREE.Object3D}>({});
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -86,7 +86,7 @@ const Globe: React.FC = () => {
     const bgGlow = new THREE.Mesh(bgGlowGeometry, bgGlowMaterial);
     scene.add(bgGlow);
 
-    // Create globe - make it larger (2.0 instead of 1.5)
+    // Create globe
     const globeGeometry = new THREE.SphereGeometry(2.0, 64, 64);
     
     // Earth texture with dark theme
@@ -105,7 +105,7 @@ const Globe: React.FC = () => {
       bumpMap: bumpMap,
       bumpScale: 0.05,
       shininess: 10,
-      color: new THREE.Color(0x888888), // Lighter color for better visibility
+      color: new THREE.Color(0x888888),
       emissive: new THREE.Color(0x223355),
       emissiveIntensity: 0.2,
     });
@@ -126,18 +126,25 @@ const Globe: React.FC = () => {
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
     scene.add(glowMesh);
 
-    // Add colored overlays for highlighted countries instead of markers
+    // Create a parent object for all location highlights - this is key for rotation sync
+    const highlightsGroup = new THREE.Group();
+    scene.add(highlightsGroup);
+    globe.add(highlightsGroup);  // Add as a child of the globe for synchronized rotation
+
+    // Add colored overlays for highlighted countries with smaller size
     const highlightCountry = (location: Location) => {
       // Convert lat/lng to 3D coordinates
       const phi = (90 - location.lat) * (Math.PI / 180);
       const theta = (location.lng + 180) * (Math.PI / 180);
       
-      const x = -2.02 * Math.sin(phi) * Math.cos(theta);
-      const y = 2.02 * Math.cos(phi);
-      const z = 2.02 * Math.sin(phi) * Math.sin(theta);
+      // Calculate position on the globe surface - slightly increased offset for better visibility
+      const radius = 2.01;  // Just slightly above the globe surface
+      const x = -radius * Math.sin(phi) * Math.cos(theta);
+      const y = radius * Math.cos(phi);
+      const z = radius * Math.sin(phi) * Math.sin(theta);
       
-      // Create a small polygon as a highlight
-      const highlightGeometry = new THREE.CircleGeometry(0.25, 32);
+      // Create a smaller highlight
+      const highlightGeometry = new THREE.CircleGeometry(0.15, 32);  // Reduced from 0.25 to 0.15
       
       // Set color based on location type
       const highlightColor = location.type === 'source' ? 0x1EAEDB : 0x34D399;
@@ -159,7 +166,9 @@ const Globe: React.FC = () => {
       highlight.rotateY(Math.PI);
       
       highlight.userData = { location: location.name, type: location.type };
-      scene.add(highlight);
+      
+      // Add highlight to the globe itself rather than directly to the scene
+      highlightsGroup.add(highlight);
       
       // Store reference to this highlight
       highlightedAreasRef.current[location.name] = highlight;
@@ -205,11 +214,6 @@ const Globe: React.FC = () => {
       
       if (autoRotate && globeRef.current) {
         globeRef.current.rotation.y += autoRotateSpeed;
-        
-        // Also rotate the highlighted areas with the globe
-        Object.values(highlightedAreasRef.current).forEach(highlight => {
-          highlight.rotation.y += autoRotateSpeed;
-        });
       }
       
       // Update controls
@@ -219,7 +223,7 @@ const Globe: React.FC = () => {
       
       // Raycasting for hover effects
       raycasterRef.current.setFromCamera(mouseRef.current, camera);
-      const intersects = raycasterRef.current.intersectObjects(scene.children);
+      const intersects = raycasterRef.current.intersectObjects(scene.children, true);
       
       let hoveredMarker = null;
       

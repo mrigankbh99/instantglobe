@@ -7,11 +7,11 @@ import Globe from './Globe';
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen pt-20 overflow-hidden">
-      {/* Background Elements with New Gradient */}
+      {/* Background Elements with New Gradient - Making flares smaller */}
       <div className="absolute inset-0 z-0 opacity-50">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-indigo-600/20 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/20 rounded-full filter blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-80 h-80 bg-purple-500/15 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-600/20 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-72 h-72 bg-cyan-500/20 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-purple-500/15 rounded-full filter blur-3xl"></div>
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 pt-10 md:pt-20 flex flex-col md:flex-row items-center">
