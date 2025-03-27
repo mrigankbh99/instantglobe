@@ -67,13 +67,23 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
     controls.enabled = true;
     controlsRef.current = controls;
 
+    // Add a light background behind the Earth
+    const backgroundSphere = new THREE.Mesh(
+      new THREE.SphereGeometry(2.2, 32, 32),
+      new THREE.MeshBasicMaterial({
+        color: 0x202040,
+        side: THREE.BackSide,
+        transparent: true,
+        opacity: 0.2
+      })
+    );
+    scene.add(backgroundSphere);
+
     // Setup lighting and globe
     setupLighting(scene);
     const globe = createGlobe();
     scene.add(globe);
     globeRef.current = globe;
-    
-    // No glow effect for a more realistic Earth look
     
     // Add currency markers
     addCurrencyMarkers(scene);
@@ -123,12 +133,12 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
 
   // Helper function to setup lighting
   const setupLighting = (scene: THREE.Scene) => {
-    // Ambient light - reduced intensity for darker appearance
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
+    // Increased ambient light intensity for better visibility
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
 
-    // Point light - adjusted position and intensity for darker appearance
-    const pointLight = new THREE.PointLight(0xffffff, 0.6);
+    // Adjusted point light for better illumination
+    const pointLight = new THREE.PointLight(0xffffff, 1.2);
     pointLight.position.set(5, 3, 5);
     scene.add(pointLight);
   };
@@ -137,7 +147,7 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
   const createGlobe = () => {
     const globeGeometry = new THREE.SphereGeometry(2, 64, 64);
     
-    // Earth texture with darker appearance
+    // Earth texture with improved brightness
     const textureLoader = new THREE.TextureLoader();
     const earthTexture = textureLoader.load(
       'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg'
@@ -152,8 +162,8 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
       map: earthTexture,
       bumpMap: bumpMap,
       bumpScale: 0.05,
-      shininess: 5,
-      color: new THREE.Color(0x777777), // Darker color overlay
+      shininess: 10,
+      color: new THREE.Color(0xaaaaaa), // Lighter color overlay
     });
     
     return new THREE.Mesh(globeGeometry, customMaterial);
@@ -164,22 +174,22 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
     locations.forEach((location) => {
       const position = latLngToVector3(location.lat, location.lng);
       
-      // Adjust position to move markers slightly outward from the globe surface
+      // Increase offset to move markers further from globe surface
       const direction = new THREE.Vector3(position.x, position.y, position.z).normalize();
       const adjustedPosition = new THREE.Vector3(
-        position.x + direction.x * 0.15,
-        position.y + direction.y * 0.15,
-        position.z + direction.z * 0.15
+        position.x + direction.x * 0.25,
+        position.y + direction.y * 0.25,
+        position.z + direction.z * 0.25
       );
       
-      // Create text sprite for currency symbol
+      // Create text sprite for currency symbol with improved visibility
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       canvas.width = 128;
       canvas.height = 128;
       
       if (context) {
-        context.fillStyle = location.type === 'source' ? '#1EAEDB' : '#34D399';
+        context.fillStyle = location.type === 'source' ? '#3B9EFF' : '#4AE3B5';
         context.font = '80px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
@@ -194,7 +204,7 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
       
       const sprite = new THREE.Sprite(spriteMaterial);
       sprite.position.set(adjustedPosition.x, adjustedPosition.y, adjustedPosition.z);
-      sprite.scale.set(0.4, 0.4, 0.4);
+      sprite.scale.set(0.5, 0.5, 0.5); // Slightly larger scale
       sprite.userData = { location: location.name, type: location.type };
       
       scene.add(sprite);
