@@ -6,7 +6,6 @@ import Globe from './Globe';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Input } from '@/components/ui/input';
 import { useToast } from "@/components/ui/use-toast";
-import CurrencyConverterWidget from './CurrencyConverterWidget';
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
@@ -143,15 +142,8 @@ const HeroSection = () => {
         </div>
       </div>
       
-      {/* Currency Converter Widget */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 pb-10 animate-fade-in-up" style={{ animationDelay: '0.9s' }}>
-        <div className="max-w-3xl mx-auto">
-          <CurrencyConverterWidget />
-        </div>
-      </div>
-      
       {/* Waitlist Section */}
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6 pb-20 animate-fade-in-up" style={{ animationDelay: '1s' }}>
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 pb-20 animate-fade-in-up" style={{ animationDelay: '0.9s' }}>
         <div className="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 backdrop-blur-md border border-white/10 rounded-xl p-6 md:p-8 mt-6">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Join Our Waitlist</h2>
