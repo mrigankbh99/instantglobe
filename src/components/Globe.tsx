@@ -28,7 +28,7 @@ const Globe: React.FC = () => {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
-  const markersRef = useRef<{ [key: string]: THREE.Mesh }>({});
+  const markersRef = useRef<{ [key: string]: THREE.Object3D }>({});
   const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
   const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
 
@@ -211,7 +211,7 @@ const Globe: React.FC = () => {
           hoveredMarker = object.userData.location;
           setHoveredLocation(object.userData.location);
           
-          // Scale up the hovered sprite
+          // Scale up the hovered object (whether it's a sprite or mesh)
           if (object.type === 'Sprite') {
             object.scale.set(0.5, 0.5, 0.5);
           }
@@ -223,10 +223,10 @@ const Globe: React.FC = () => {
       if (!hoveredMarker) {
         setHoveredLocation(null);
         
-        // Reset all sprite scales
+        // Reset all marker scales
         Object.values(markersRef.current).forEach(marker => {
           if (marker.type === 'Sprite') {
-            marker.scale.set(0.4, 0.4, 0.4);
+            (marker as THREE.Sprite).scale.set(0.4, 0.4, 0.4);
           }
         });
       }
