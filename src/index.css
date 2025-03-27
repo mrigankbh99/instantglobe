@@ -1,5 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -49,17 +50,17 @@
   }
 
   body {
-    @apply bg-theme-dark text-foreground font-poppins antialiased;
+    @apply bg-theme-dark text-foreground font-space antialiased;
     background-image: 
-      radial-gradient(circle at 15% 25%, rgba(79, 70, 229, 0.08) 0%, transparent 25%),
-      radial-gradient(circle at 85% 75%, rgba(56, 189, 248, 0.08) 0%, transparent 25%),
-      radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.06) 0%, transparent 30%);
+      radial-gradient(circle at 15% 15%, rgba(102, 51, 238, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 85% 85%, rgba(0, 194, 255, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, rgba(72, 45, 120, 0.06) 0%, transparent 30%);
   }
 }
 
 @layer utilities {
   .glassmorphism {
-    @apply bg-black/10 backdrop-blur-md border border-white/10;
+    @apply bg-black/20 backdrop-blur-md border border-white/10 shadow-xl;
   }
   
   .text-glow {
@@ -80,5 +81,33 @@
 
   .transition-all-300 {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .glass-card {
+    @apply bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-md border border-white/10 shadow-2xl;
+  }
+  
+  .neon-border {
+    @apply border border-transparent;
+    background: linear-gradient(to right, rgba(102, 51, 238, 0.3), rgba(0, 194, 255, 0.3)) border-box;
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) padding-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
+  
+  .gradient-text {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(to right, #6633EE, #00C2FF);
+  }
+  
+  .gradient-btn {
+    @apply relative overflow-hidden;
+    background: linear-gradient(to right, #6633EE, #00C2FF);
+  }
+  
+  .gradient-btn:hover {
+    background: linear-gradient(to right, #5428cc, #00adeb);
   }
 }

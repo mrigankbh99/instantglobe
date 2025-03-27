@@ -53,13 +53,17 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-        // Custom colors - updated to indigo/purple/cyan theme
-        'theme-dark': '#0A0E22',
-        'theme-blue': '#6366F1', // Indigo
-        'theme-green': '#38BDF8', // Cyan
+        // Modern color scheme with rich variations
+        'theme-dark': '#0A0B14',
+        'theme-blue': '#6633EE', // Main purple
+        'theme-cyan': '#00C2FF', // Modern cyan
+        'theme-indigo': '#483190', // Deep indigo
+        'theme-lavender': '#9773FF', // Light purple
         'theme-gray': '#94A3B8',
+        'theme-dark-blue': '#1A1F35',
         'theme-light': '#F9FAFB',
-        'theme-purple': '#8B5CF6', // Purple
+        'theme-teal': '#38CFC9', // Additional accent
+        'theme-magenta': '#D946EF' // Additional accent
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -68,6 +72,7 @@ export default {
 			},
 			fontFamily: {
 				'poppins': ['Poppins', 'sans-serif'],
+        'space': ['Space Grotesk', 'sans-serif'],
 			},
 			keyframes: {
 				'accordion-down': {
@@ -129,6 +134,14 @@ export default {
           '100%': {
             transform: 'rotate(360deg)'
           }
+        },
+        'shimmer': {
+          '0%': {
+            backgroundPosition: '-200% 0'
+          },
+          '100%': {
+            backgroundPosition: '200% 0'
+          }
         }
 			},
 			animation: {
@@ -138,7 +151,8 @@ export default {
         'float': 'float 6s ease-in-out infinite',
         'fade-in-up': 'fade-in-up 0.7s ease-out',
         'fade-in': 'fade-in 0.5s ease-out',
-        'rotate-slow': 'rotate-slow 20s linear infinite'
+        'rotate-slow': 'rotate-slow 20s linear infinite',
+        'shimmer': 'shimmer 3s linear infinite'
 			},
       backdropBlur: {
         'xs': '2px',

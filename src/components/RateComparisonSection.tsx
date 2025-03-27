@@ -56,10 +56,15 @@ const comparisonData = [
 const RateComparisonSection = () => {
   return (
     <section className="py-16 relative overflow-hidden">
-      <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+      <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
+        <div className="absolute top-20 left-1/4 w-64 h-64 bg-theme-blue/15 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-20 right-1/4 w-64 h-64 bg-theme-cyan/15 rounded-full filter blur-3xl"></div>
+      </div>
+      
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-12 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            How We <span className="text-indigo-400">Compare</span>
+          <h2 className="text-3xl md:text-5xl font-bold font-space mb-4">
+            How We <span className="gradient-text">Compare</span>
           </h2>
           <p className="text-gray-300 max-w-3xl mx-auto text-lg">
             See how our service stacks up against traditional remittance options.
@@ -67,27 +72,27 @@ const RateComparisonSection = () => {
         </div>
         
         <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-          <Card className="shadow-lg border-indigo-500/20 bg-gradient-to-br from-indigo-950/70 to-theme-dark/90 backdrop-blur-sm overflow-hidden w-full">
+          <Card className="shadow-xl glass-card border-none overflow-hidden w-full">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow className="border-b border-white/10">
-                      <TableHead className="text-indigo-300 py-6 text-base">Service</TableHead>
-                      <TableHead className="text-indigo-300 py-6 text-base">Exchange Rate</TableHead>
-                      <TableHead className="text-indigo-300 py-6 text-base">Fees</TableHead>
-                      <TableHead className="text-indigo-300 py-6 text-base">Transfer Time</TableHead>
-                      <TableHead className="text-indigo-300 py-6 text-base">Rate Transparency</TableHead>
-                      <TableHead className="text-indigo-300 py-6 text-base">Stablecoin Powered</TableHead>
+                      <TableHead className="text-theme-cyan py-6 text-base font-space">Service</TableHead>
+                      <TableHead className="text-theme-cyan py-6 text-base font-space">Exchange Rate</TableHead>
+                      <TableHead className="text-theme-cyan py-6 text-base font-space">Fees</TableHead>
+                      <TableHead className="text-theme-cyan py-6 text-base font-space">Transfer Time</TableHead>
+                      <TableHead className="text-theme-cyan py-6 text-base font-space">Rate Transparency</TableHead>
+                      <TableHead className="text-theme-cyan py-6 text-base font-space">Stablecoin Powered</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {comparisonData.map((item) => (
                       <TableRow 
                         key={item.provider} 
-                        className={`border-b border-white/10 hover:bg-indigo-500/5 ${item.highlight ? 'bg-indigo-500/10' : ''}`}
+                        className={`border-b border-white/10 hover:bg-white/5 transition-colors ${item.highlight ? 'bg-gradient-to-r from-theme-blue/10 to-theme-cyan/10' : ''}`}
                       >
-                        <TableCell className={`font-medium py-6 ${item.highlight ? 'text-indigo-400 text-lg' : ''}`}>
+                        <TableCell className={`font-medium py-6 ${item.highlight ? 'text-theme-cyan text-lg font-space' : ''}`}>
                           {item.provider}
                         </TableCell>
                         <TableCell className="py-6">{item.exchangeRate}</TableCell>

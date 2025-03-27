@@ -90,13 +90,13 @@ const HomeConverterWidget = () => {
   };
 
   return (
-    <Card className="shadow-lg border-indigo-500/20 bg-gradient-to-br from-indigo-950/70 to-theme-dark/90 backdrop-blur-sm overflow-hidden w-full">
+    <Card className="shadow-xl glass-card border-none overflow-hidden w-full">
       <CardHeader className="pb-2 flex flex-row items-center justify-between">
         <div className="flex items-center">
-          <CircleDollarSign className="mr-2 text-indigo-400 h-5 w-5" />
-          <h3 className="font-semibold text-lg">Quick Convert</h3>
+          <CircleDollarSign className="mr-2 text-theme-cyan h-5 w-5" />
+          <h3 className="font-semibold text-lg font-space">Quick Convert</h3>
         </div>
-        <Badge variant="outline" className="bg-indigo-600/10 text-indigo-400 border-indigo-500/20 px-2.5 py-0.5 text-xs font-medium flex items-center gap-1">
+        <Badge variant="outline" className="bg-gradient-to-r from-theme-blue/20 to-theme-cyan/20 text-white border-none px-2.5 py-0.5 text-xs font-medium flex items-center gap-1 backdrop-blur-sm">
           <CircleCheck className="h-3 w-3" />
           <span>Zero Fees</span>
         </Badge>
@@ -111,7 +111,7 @@ const HomeConverterWidget = () => {
                 type="number"
                 value={amount}
                 onChange={handleAmountChange}
-                className="bg-theme-dark/50 border-white/10 focus-visible:ring-indigo-500 focus-visible:border-indigo-500/20 h-11 appearance-none"
+                className="bg-theme-dark/50 border border-white/10 focus-visible:ring-theme-cyan focus-visible:border-theme-cyan/20 h-11 appearance-none rounded-xl"
                 placeholder="Enter amount"
                 style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
               />
@@ -119,15 +119,15 @@ const HomeConverterWidget = () => {
                 value={sourceCurrency.code}
                 onValueChange={handleSourceCurrencyChange}
               >
-                <SelectTrigger className="w-28 bg-theme-dark/50 border-white/10 focus:ring-indigo-500 focus:border-indigo-500/20 h-11">
+                <SelectTrigger className="w-28 bg-theme-dark/50 border border-white/10 focus:ring-theme-blue focus:border-theme-blue/20 h-11 rounded-xl">
                   <SelectValue placeholder="Currency" />
                 </SelectTrigger>
-                <SelectContent className="bg-theme-dark border border-white/10">
+                <SelectContent className="bg-theme-dark border border-white/10 rounded-xl">
                   {currencies.map((currency) => (
                     <SelectItem 
                       key={currency.code} 
                       value={currency.code}
-                      className="focus:bg-indigo-600/10 focus:text-white"
+                      className="focus:bg-theme-blue/10 focus:text-white"
                     >
                       <div className="flex items-center">
                         <span className="mr-2 text-base">{currency.flag}</span>
@@ -141,16 +141,16 @@ const HomeConverterWidget = () => {
           </div>
           
           {/* Exchange Rate Display */}
-          <div className="flex justify-between items-center py-1.5 px-3 rounded-md bg-indigo-600/5 border border-indigo-500/10">
+          <div className="flex justify-between items-center py-1.5 px-3 rounded-xl bg-gradient-to-r from-theme-blue/5 to-theme-cyan/5 backdrop-blur-sm border border-white/5">
             <div className="text-sm text-gray-300">
               <span>1 {sourceCurrency.code} = {rate.toFixed(2)} {targetCurrency.code}</span>
             </div>
             <button 
               onClick={handleRefresh} 
-              className="p-1 rounded-full hover:bg-indigo-500/10 transition-colors"
+              className="p-1 rounded-full hover:bg-white/10 transition-colors"
               disabled={isLoading}
             >
-              <RefreshCw className={`h-3.5 w-3.5 text-indigo-400 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-3.5 w-3.5 text-theme-cyan ${isLoading ? 'animate-spin' : ''}`} />
             </button>
           </div>
           
@@ -162,10 +162,10 @@ const HomeConverterWidget = () => {
                 type="text"
                 value={convertedAmount.toFixed(2)}
                 readOnly
-                className="bg-theme-dark/50 border-white/10 h-11 cursor-not-allowed"
+                className="bg-theme-dark/50 border border-white/10 h-11 cursor-not-allowed rounded-xl"
                 style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
               />
-              <div className="w-28 h-11 px-4 border border-white/10 rounded-md bg-theme-dark/50 flex items-center space-x-2">
+              <div className="w-28 h-11 px-4 border border-white/10 rounded-xl bg-theme-dark/50 flex items-center space-x-2">
                 <span className="mr-1 text-base">{targetCurrency.flag}</span>
                 <span>{targetCurrency.code}</span>
               </div>
@@ -175,7 +175,7 @@ const HomeConverterWidget = () => {
           {/* Button to go to full converter */}
           <div className="pt-2">
             <Button 
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="w-full gradient-btn text-white rounded-xl shadow-lg"
               onClick={() => window.location.href = '/converter'}
             >
               Full Converter
