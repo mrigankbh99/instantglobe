@@ -3,19 +3,21 @@ import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 // Fix the import path for OrbitControls
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { DollarSign, EuroIcon } from 'lucide-react';
 
 interface Location {
   name: string;
   lat: number;
   lng: number;
   type: 'source' | 'destination';
+  currency: string;
 }
 
 const locations: Location[] = [
-  { name: 'USA', lat: 40.7128, lng: -74.0060, type: 'source' },
-  { name: 'UAE', lat: 25.2048, lng: 55.2708, type: 'source' },
-  { name: 'UK', lat: 51.5074, lng: -0.1278, type: 'source' },
-  { name: 'India', lat: 20.5937, lng: 78.9629, type: 'destination' }
+  { name: 'USA', lat: 40.7128, lng: -74.0060, type: 'source', currency: '$' },
+  { name: 'UAE', lat: 25.2048, lng: 55.2708, type: 'source', currency: 'د.إ' },
+  { name: 'UK', lat: 51.5074, lng: -0.1278, type: 'source', currency: '€' },
+  { name: 'India', lat: 20.5937, lng: 78.9629, type: 'destination', currency: '₹' }
 ];
 
 const Globe: React.FC = () => {
@@ -44,8 +46,8 @@ const Globe: React.FC = () => {
       0.1, 
       1000
     );
-    // Move camera back to see the smaller globe
-    camera.position.z = 7;
+    // Position camera to see the globe well
+    camera.position.z = 6;
     cameraRef.current = camera;
 
     // Renderer setup
@@ -75,8 +77,8 @@ const Globe: React.FC = () => {
     pointLight.position.set(5, 3, 5);
     scene.add(pointLight);
 
-    // Create globe - make it smaller (1.5 instead of 2)
-    const globeGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+    // Create globe - slightly larger than before but still fits well
+    const globeGeometry = new THREE.SphereGeometry(2, 64, 64);
     
     // Earth texture with dark theme
     const textureLoader = new THREE.TextureLoader();
@@ -94,69 +96,63 @@ const Globe: React.FC = () => {
       bumpMap: bumpMap,
       bumpScale: 0.05,
       shininess: 5,
-      color: new THREE.Color(0x666666), // Lighter color for countries
-      emissive: new THREE.Color(0x112244),
-      emissiveIntensity: 0.1,
+      color: new THREE.Color(0x888888), // Lighter color for countries
+      emissive: new THREE.Color(0x1a2d5b), // Subtle blue overlay
+      emissiveIntensity: 0.2,
     });
     
     const globe = new THREE.Mesh(globeGeometry, customMaterial);
     scene.add(globe);
 
-    // Add a subtle glow effect - adjust for smaller globe
-    const glowGeometry = new THREE.SphereGeometry(1.6, 64, 64);
+    // Add a subtle glow effect
+    const glowGeometry = new THREE.SphereGeometry(2.1, 64, 64);
     const glowMaterial = new THREE.MeshBasicMaterial({
-      color: 0x0a1a2a,
+      color: 0x3366cc,
       transparent: true,
-      opacity: 0.15,
+      opacity: 0.1,
       side: THREE.BackSide,
     });
     
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
     scene.add(glowMesh);
 
-    // Add location markers - adjust for smaller globe
+    // Add currency symbols as text sprites
     locations.forEach((location) => {
-      // Convert lat/lng to 3D coordinates - adjusted for smaller radius (1.5)
+      // Convert lat/lng to 3D coordinates - adjusted for our globe size (2)
       const phi = (90 - location.lat) * (Math.PI / 180);
       const theta = (location.lng + 180) * (Math.PI / 180);
       
-      const x = -1.5 * Math.sin(phi) * Math.cos(theta);
-      const y = 1.5 * Math.cos(phi);
-      const z = 1.5 * Math.sin(phi) * Math.sin(theta);
+      const x = -2 * Math.sin(phi) * Math.cos(theta);
+      const y = 2 * Math.cos(phi);
+      const z = 2 * Math.sin(phi) * Math.sin(theta);
       
-      // Create marker
-      const markerGeometry = new THREE.SphereGeometry(0.04, 16, 16);
+      // Create text sprite for currency symbol
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.width = 128;
+      canvas.height = 128;
       
-      // Set color based on location type
-      const markerColor = location.type === 'source' ? 0x1EAEDB : 0x34D399;
+      if (context) {
+        context.fillStyle = location.type === 'source' ? '#1EAEDB' : '#34D399';
+        context.font = '80px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(location.currency, 64, 64);
+      }
       
-      const markerMaterial = new THREE.MeshBasicMaterial({
-        color: markerColor,
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMaterial = new THREE.SpriteMaterial({
+        map: texture,
         transparent: true,
-        opacity: 0.9,
       });
       
-      const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-      marker.position.set(x, y, z);
-      marker.userData = { location: location.name, type: location.type };
+      const sprite = new THREE.Sprite(spriteMaterial);
+      sprite.position.set(x, y, z);
+      sprite.scale.set(0.4, 0.4, 0.4);
+      sprite.userData = { location: location.name, type: location.type };
       
-      scene.add(marker);
-      markersRef.current[location.name] = marker;
-      
-      // Add pulse effect - adjust size for smaller globe
-      const pulseGeometry = new THREE.SphereGeometry(0.06, 16, 16);
-      const pulseMaterial = new THREE.MeshBasicMaterial({
-        color: markerColor,
-        transparent: true,
-        opacity: 0.4,
-      });
-      
-      const pulse = new THREE.Mesh(pulseGeometry, pulseMaterial);
-      pulse.position.set(x, y, z);
-      pulse.scale.set(1, 1, 1);
-      pulse.userData = { isPulse: true, baseSize: 1, location: location.name };
-      
-      scene.add(pulse);
+      scene.add(sprite);
+      markersRef.current[location.name] = sprite;
     });
 
     // Auto-rotation
@@ -211,35 +207,29 @@ const Globe: React.FC = () => {
       
       for (let i = 0; i < intersects.length; i++) {
         const object = intersects[i].object;
-        if (object.userData && object.userData.location && !object.userData.isPulse) {
+        if (object.userData && object.userData.location) {
           hoveredMarker = object.userData.location;
           setHoveredLocation(object.userData.location);
+          
+          // Scale up the hovered sprite
+          if (object.type === 'Sprite') {
+            object.scale.set(0.5, 0.5, 0.5);
+          }
+          
           break;
         }
       }
       
       if (!hoveredMarker) {
         setHoveredLocation(null);
-      }
-      
-      // Pulse animation
-      scene.children.forEach((child) => {
-        if (child.userData && child.userData.isPulse) {
-          const locationName = child.userData.location;
-          
-          // If this pulse's marker is hovered, make it pulse more dramatically
-          if (hoveredLocation === locationName) {
-            child.scale.x = 1 + Math.sin(Date.now() * 0.005) * 0.5;
-            child.scale.y = 1 + Math.sin(Date.now() * 0.005) * 0.5;
-            child.scale.z = 1 + Math.sin(Date.now() * 0.005) * 0.5;
-          } else {
-            // Normal subtle pulsing
-            child.scale.x = 1 + Math.sin(Date.now() * 0.003) * 0.2;
-            child.scale.y = 1 + Math.sin(Date.now() * 0.003) * 0.2;
-            child.scale.z = 1 + Math.sin(Date.now() * 0.003) * 0.2;
+        
+        // Reset all sprite scales
+        Object.values(markersRef.current).forEach(marker => {
+          if (marker.type === 'Sprite') {
+            marker.scale.set(0.4, 0.4, 0.4);
           }
-        }
-      });
+        });
+      }
       
       renderer.render(scene, camera);
     };
@@ -287,8 +277,11 @@ const Globe: React.FC = () => {
   return (
     <div 
       ref={mountRef} 
-      className="w-full h-full min-h-[500px]"
+      className="w-full h-full min-h-[500px] relative"
     >
+      {/* Add a background glare effect */}
+      <div className="absolute -inset-10 bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-emerald-500/20 rounded-full filter blur-3xl opacity-30 animate-pulse-glow"></div>
+      
       {hoveredLocation && (
         <div className="absolute top-5 left-1/2 transform -translate-x-1/2 glassmorphism px-4 py-2 rounded-full text-sm animate-fade-in">
           {hoveredLocation}
