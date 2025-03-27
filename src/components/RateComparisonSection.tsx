@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CheckCircle, XCircle } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Updated comparison data with new columns
 const comparisonData = [
@@ -54,6 +55,47 @@ const comparisonData = [
 ];
 
 const RateComparisonSection = () => {
+  const isMobile = useIsMobile();
+  
+  // Mobile Card View for each provider
+  const MobileComparisonCard = ({ item }: { item: typeof comparisonData[0] }) => (
+    <div className={`mb-4 p-4 rounded-lg border border-white/10 ${item.highlight ? 'bg-gradient-to-r from-theme-blue/10 to-theme-cyan/10' : 'bg-theme-dark/50'}`}>
+      <h3 className={`text-lg font-medium mb-3 ${item.highlight ? 'text-theme-cyan font-space' : ''}`}>
+        {item.provider}
+      </h3>
+      <div className="space-y-2">
+        <div className="flex justify-between">
+          <span className="text-theme-gray text-sm">Exchange Rate:</span>
+          <span className="text-right">{item.exchangeRate}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-theme-gray text-sm">Fees:</span>
+          <span className="text-right">{item.fees}</span>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-theme-gray text-sm">Transfer Time:</span>
+          <span className="text-right">{item.transferTime}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-theme-gray text-sm">Rate Transparency:</span>
+          <span className="text-right">
+            {item.rateTransparency ? 
+              <CheckCircle className="h-5 w-5 text-green-500 inline-block" /> : 
+              <XCircle className="h-5 w-5 text-red-500 inline-block" />}
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-theme-gray text-sm">Stablecoin Powered:</span>
+          <span className="text-right">
+            {item.stablecoinPowered ? 
+              <CheckCircle className="h-5 w-5 text-green-500 inline-block" /> : 
+              <XCircle className="h-5 w-5 text-red-500 inline-block" />}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section className="py-16 relative overflow-hidden">
       <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
@@ -74,48 +116,61 @@ const RateComparisonSection = () => {
         <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <Card className="shadow-xl glass-card border-none overflow-hidden w-full">
             <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-b border-white/10">
-                      <TableHead className="text-theme-cyan py-6 text-base font-space">Service</TableHead>
-                      <TableHead className="text-theme-cyan py-6 text-base font-space">Exchange Rate</TableHead>
-                      <TableHead className="text-theme-cyan py-6 text-base font-space">Fees</TableHead>
-                      <TableHead className="text-theme-cyan py-6 text-base font-space">Transfer Time</TableHead>
-                      <TableHead className="text-theme-cyan py-6 text-base font-space">Rate Transparency</TableHead>
-                      <TableHead className="text-theme-cyan py-6 text-base font-space">Stablecoin Powered</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {comparisonData.map((item) => (
-                      <TableRow 
-                        key={item.provider} 
-                        className={`border-b border-white/10 hover:bg-white/5 transition-colors ${item.highlight ? 'bg-gradient-to-r from-theme-blue/10 to-theme-cyan/10' : ''}`}
-                      >
-                        <TableCell className={`font-medium py-6 ${item.highlight ? 'text-theme-cyan text-lg font-space' : ''}`}>
-                          {item.provider}
-                        </TableCell>
-                        <TableCell className="py-6">{item.exchangeRate}</TableCell>
-                        <TableCell className="py-6">{item.fees}</TableCell>
-                        <TableCell className="py-6">{item.transferTime}</TableCell>
-                        <TableCell className="py-6">
-                          {item.rateTransparency ? 
-                            <CheckCircle className="h-6 w-6 text-green-500" /> : 
-                            <XCircle className="h-6 w-6 text-red-500" />}
-                        </TableCell>
-                        <TableCell className="py-6">
-                          {item.stablecoinPowered ? 
-                            <CheckCircle className="h-6 w-6 text-green-500" /> : 
-                            <XCircle className="h-6 w-6 text-red-500" />}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              <div className="p-6 text-xs text-gray-400">
-                *Exchange rates and fees are for comparison purposes only and may vary based on amount and payment method.
-              </div>
+              {isMobile ? (
+                <div className="p-4">
+                  {comparisonData.map((item, index) => (
+                    <MobileComparisonCard key={index} item={item} />
+                  ))}
+                  <div className="text-xs text-gray-400 mt-4">
+                    *Exchange rates and fees are for comparison purposes only and may vary based on amount and payment method.
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-b border-white/10">
+                          <TableHead className="text-theme-cyan py-6 text-base font-space">Service</TableHead>
+                          <TableHead className="text-theme-cyan py-6 text-base font-space">Exchange Rate</TableHead>
+                          <TableHead className="text-theme-cyan py-6 text-base font-space">Fees</TableHead>
+                          <TableHead className="text-theme-cyan py-6 text-base font-space">Transfer Time</TableHead>
+                          <TableHead className="text-theme-cyan py-6 text-base font-space">Rate Transparency</TableHead>
+                          <TableHead className="text-theme-cyan py-6 text-base font-space">Stablecoin Powered</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {comparisonData.map((item) => (
+                          <TableRow 
+                            key={item.provider} 
+                            className={`border-b border-white/10 hover:bg-white/5 transition-colors ${item.highlight ? 'bg-gradient-to-r from-theme-blue/10 to-theme-cyan/10' : ''}`}
+                          >
+                            <TableCell className={`font-medium py-6 ${item.highlight ? 'text-theme-cyan text-lg font-space' : ''}`}>
+                              {item.provider}
+                            </TableCell>
+                            <TableCell className="py-6">{item.exchangeRate}</TableCell>
+                            <TableCell className="py-6">{item.fees}</TableCell>
+                            <TableCell className="py-6">{item.transferTime}</TableCell>
+                            <TableCell className="py-6">
+                              {item.rateTransparency ? 
+                                <CheckCircle className="h-6 w-6 text-green-500" /> : 
+                                <XCircle className="h-6 w-6 text-red-500" />}
+                            </TableCell>
+                            <TableCell className="py-6">
+                              {item.stablecoinPowered ? 
+                                <CheckCircle className="h-6 w-6 text-green-500" /> : 
+                                <XCircle className="h-6 w-6 text-red-500" />}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <div className="p-6 text-xs text-gray-400">
+                    *Exchange rates and fees are for comparison purposes only and may vary based on amount and payment method.
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>
