@@ -34,7 +34,7 @@ const Navbar = () => {
           <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
             How It Works
           </a>
-          <a href="#rates" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
+          <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
             Our Rates
           </a>
           <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
@@ -72,7 +72,7 @@ const Navbar = () => {
             <a href="#" className="block py-2 text-gray-300 hover:text-white">
               How It Works
             </a>
-            <a href="#rates" className="block py-2 text-gray-300 hover:text-white">
+            <a href="#" className="block py-2 text-gray-300 hover:text-white">
               Our Rates
             </a>
             <a href="#" className="block py-2 text-gray-300 hover:text-white">
