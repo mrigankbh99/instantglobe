@@ -3,9 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowUp, TrendingUp } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { toast } from "@/hooks/use-toast";
 
 // Type definitions
 type Currency = 'USD' | 'GBP' | 'AED';
@@ -112,7 +111,7 @@ const CurrencyConverterWidget = () => {
   }, [fromCurrency, amount]); // Convert whenever currency or amount changes
 
   return (
-    <div className="bg-black rounded-3xl p-8 shadow-xl text-white">
+    <div className="bg-theme-dark rounded-3xl p-8 shadow-xl text-white border border-white/10">
       <div className="space-y-8">
         {/* You send */}
         <div className="space-y-2">
@@ -122,11 +121,11 @@ const CurrencyConverterWidget = () => {
               type="text"
               value={amount}
               onChange={handleAmountChange}
-              className="text-5xl font-medium border-none bg-transparent p-0 h-auto text-emerald-300 w-2/3 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="text-5xl font-medium border-none bg-transparent p-0 h-auto text-theme-blue w-2/3 focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="0.00"
             />
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-800">
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-theme-dark/80 border border-white/10">
                 <span className="text-xl">{currencyData[fromCurrency].flag}</span>
               </div>
               <Select 
@@ -136,7 +135,7 @@ const CurrencyConverterWidget = () => {
                 <SelectTrigger className="w-24 bg-transparent border-none text-xl focus:ring-0">
                   <SelectValue placeholder="Select currency" />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-900 border border-gray-800">
+                <SelectContent className="bg-theme-dark border border-white/10">
                   <SelectItem value="USD">USD</SelectItem>
                   <SelectItem value="GBP">GBP</SelectItem>
                   <SelectItem value="AED">AED</SelectItem>
@@ -146,7 +145,7 @@ const CurrencyConverterWidget = () => {
           </div>
         </div>
         
-        <div className="h-px w-full bg-gray-800"></div>
+        <div className="h-px w-full bg-white/10"></div>
         
         {/* Fee Info */}
         <div className="flex items-center justify-between text-lg">
@@ -155,39 +154,19 @@ const CurrencyConverterWidget = () => {
             <span>{currencyData[fromCurrency].symbol}0</span>
           </div>
           <div>
-            <Badge className="bg-indigo-900/60 text-indigo-300 hover:bg-indigo-900/60">
-              Zero Fees 🎉
+            <Badge className="bg-theme-purple/20 text-theme-purple hover:bg-theme-purple/20">
+              Zero Fees
             </Badge>
           </div>
         </div>
-        
-        {/* Exchange Rate Info */}
-        <div className="flex items-center justify-between text-lg">
-          <div className="text-gray-300">Live market rate:</div>
-          <div className="flex items-center gap-2">
-            <HoverCard>
-              <HoverCardTrigger>
-                <div className="flex items-center cursor-help">
-                  <span>{currencyData[fromCurrency].symbol}1.00 = ₹{exchangeRate.toFixed(2)}</span>
-                  <TrendingUp className="ml-2 h-4 w-4 text-emerald-400" />
-                </div>
-              </HoverCardTrigger>
-              <HoverCardContent className="bg-gray-900 border border-gray-800 text-white">
-                <p className="text-sm">Live rates from Fixer.io</p>
-              </HoverCardContent>
-            </HoverCard>
-          </div>
-        </div>
-        
-        <div className="h-px w-full bg-gray-800"></div>
         
         {/* They receive */}
         <div className="space-y-2">
           <p className="text-xl text-gray-300">They receive</p>
           <div className="flex items-end justify-between">
-            <div className="text-5xl font-medium text-emerald-300 w-2/3">
+            <div className="text-5xl font-medium text-theme-green w-2/3">
               {isLoading ? (
-                <div className="animate-pulse bg-emerald-900/20 h-12 w-2/3 rounded"></div>
+                <div className="animate-pulse bg-theme-green/10 h-12 w-2/3 rounded"></div>
               ) : (
                 convertedAmount.toLocaleString('en-IN', {
                   maximumFractionDigits: 2,
@@ -196,11 +175,30 @@ const CurrencyConverterWidget = () => {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-800">
+              <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-theme-dark/80 border border-white/10">
                 <span className="text-xl">🇮🇳</span>
               </div>
               <span className="text-xl">INR</span>
             </div>
+          </div>
+        </div>
+        
+        <div className="h-px w-full bg-white/10"></div>
+        
+        {/* Exchange Rate Info - Moved to bottom */}
+        <div className="flex items-center justify-between text-lg">
+          <div className="text-gray-300">Live market rate:</div>
+          <div className="flex items-center gap-2">
+            <HoverCard>
+              <HoverCardTrigger>
+                <div className="flex items-center cursor-help">
+                  <span>{currencyData[fromCurrency].symbol}1.00 = ₹{exchangeRate.toFixed(2)}</span>
+                </div>
+              </HoverCardTrigger>
+              <HoverCardContent className="bg-theme-dark border border-white/10 text-white">
+                <p className="text-sm">Live rates from Fixer.io</p>
+              </HoverCardContent>
+            </HoverCard>
           </div>
         </div>
       </div>
