@@ -8,14 +8,13 @@ interface Location {
   lat: number;
   lng: number;
   type: 'source' | 'destination';
-  currency?: string;
 }
 
 const locations: Location[] = [
-  { name: 'USA', lat: 40.7128, lng: -74.0060, type: 'source', currency: '$' },
-  { name: 'UAE', lat: 25.2048, lng: 55.2708, type: 'source', currency: 'AED' },
-  { name: 'UK', lat: 51.5074, lng: -0.1278, type: 'source', currency: '£' },
-  { name: 'India', lat: 20.5937, lng: 78.9629, type: 'destination', currency: '₹' }
+  { name: 'USA', lat: 40.7128, lng: -74.0060, type: 'source' },
+  { name: 'UAE', lat: 25.2048, lng: 55.2708, type: 'source' },
+  { name: 'UK', lat: 51.5074, lng: -0.1278, type: 'source' },
+  { name: 'India', lat: 20.5937, lng: 78.9629, type: 'destination' }
 ];
 
 const Globe: React.FC = () => {
@@ -31,7 +30,6 @@ const Globe: React.FC = () => {
   const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
   // Fix: Update the type definition to specifically store THREE.Mesh objects
   const highlightedAreasRef = useRef<{[key: string]: THREE.Mesh}>({});
-  const labelGroupRef = useRef<THREE.Group | null>(null);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -134,43 +132,6 @@ const Globe: React.FC = () => {
     scene.add(highlightsGroup);
     globe.add(highlightsGroup);  // Add as a child of the globe for synchronized rotation
 
-    // Create a group for labels
-    const labelGroup = new THREE.Group();
-    globe.add(labelGroup);
-    labelGroupRef.current = labelGroup;
-
-    // Function to create a text sprite
-    const createTextSprite = (text: string, position: THREE.Vector3) => {
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      if (!context) return null;
-      
-      canvas.width = 128;
-      canvas.height = 64;
-      
-      context.fillStyle = 'rgba(0, 0, 0, 0)';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      
-      context.font = '40px Arial';
-      context.fillStyle = '#FFFFFF';
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillText(text, canvas.width / 2, canvas.height / 2);
-      
-      const texture = new THREE.CanvasTexture(canvas);
-      const material = new THREE.SpriteMaterial({
-        map: texture,
-        transparent: true,
-        depthTest: false
-      });
-      
-      const sprite = new THREE.Sprite(material);
-      sprite.position.copy(position);
-      sprite.scale.set(0.6, 0.3, 1);
-      
-      return sprite;
-    };
-
     // Add colored overlays for highlighted countries with smaller size
     const highlightCountry = (location: Location) => {
       // Convert lat/lng to 3D coordinates
@@ -212,21 +173,6 @@ const Globe: React.FC = () => {
       
       // Store reference to this highlight
       highlightedAreasRef.current[location.name] = highlight;
-      
-      // Add currency label above the country if available
-      if (location.currency) {
-        // Position the label slightly above the highlight
-        const labelPosition = new THREE.Vector3(
-          x * 1.15,  // Multiply by a value slightly larger than 1 to position it outside the globe
-          y * 1.15, 
-          z * 1.15
-        );
-        
-        const textSprite = createTextSprite(location.currency, labelPosition);
-        if (textSprite) {
-          labelGroup.add(textSprite);
-        }
-      }
     };
 
     // Highlight all countries
