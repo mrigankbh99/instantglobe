@@ -22,7 +22,6 @@ const CurrencyConverter = () => {
   const [amount, setAmount] = useState<string>('100');
   const [convertedAmount, setConvertedAmount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   // Simulated exchange rates (in a real app, these would be fetched from an API)
   const exchangeRates: ExchangeRate[] = [
@@ -61,7 +60,6 @@ const CurrencyConverter = () => {
       const rate = getExchangeRate(fromCurrency);
       const result = parseFloat(amount || '0') * rate;
       setConvertedAmount(result);
-      setLastUpdated(new Date());
       setIsLoading(false);
       
       toast({
@@ -77,7 +75,6 @@ const CurrencyConverter = () => {
     
     // Simulate refreshing rates
     setTimeout(() => {
-      setLastUpdated(new Date());
       setIsLoading(false);
       convert();
       
@@ -107,7 +104,7 @@ const CurrencyConverter = () => {
             </p>
           </div>
 
-          <div className="bg-card/60 backdrop-blur-sm border border-white/10 rounded-xl p-6 md:p-8 shadow-lg">
+          <div className="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 backdrop-blur-md border border-white/10 rounded-xl p-6 md:p-8 shadow-lg">
             {/* Converter Card */}
             <div className="space-y-8">
               {/* Input Section */}
@@ -120,10 +117,10 @@ const CurrencyConverter = () => {
                       value={fromCurrency} 
                       onValueChange={handleFromCurrencyChange}
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full bg-white/5 border-white/10">
                         <SelectValue placeholder="Select currency" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-theme-dark border border-white/10">
                         <SelectItem value="USD">US Dollar (USD)</SelectItem>
                         <SelectItem value="GBP">British Pound (GBP)</SelectItem>
                         <SelectItem value="AED">UAE Dirham (AED)</SelectItem>
@@ -135,7 +132,7 @@ const CurrencyConverter = () => {
                         type="text"
                         value={amount}
                         onChange={handleAmountChange}
-                        className="pl-8 pr-4 py-2 text-lg font-medium"
+                        className="pl-8 pr-4 py-2 text-lg font-medium bg-white/5 border-white/10"
                         placeholder="Enter amount"
                       />
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -150,16 +147,16 @@ const CurrencyConverter = () => {
                   <label className="text-sm text-gray-300">To</label>
                   <div className="space-y-2">
                     <Select disabled defaultValue="INR">
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full bg-white/5 border-white/10">
                         <SelectValue placeholder="Indian Rupee (INR)" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-theme-dark border border-white/10">
                         <SelectItem value="INR">Indian Rupee (INR)</SelectItem>
                       </SelectContent>
                     </Select>
                     
-                    <div className="relative bg-muted/50 rounded-md flex items-center h-10 px-3 py-2">
-                      <span className="text-gray-400 mr-1">₹</span>
+                    <div className="relative bg-white/5 rounded-md flex items-center h-12 px-3 py-2 border border-white/10">
+                      <span className="text-gray-300 mr-2">₹</span>
                       <span className="text-lg font-medium">{convertedAmount.toFixed(2)}</span>
                       <div className="absolute right-3">
                         <Badge className="bg-theme-green text-white hover:bg-theme-green/90">Zero Fees</Badge>
@@ -189,20 +186,12 @@ const CurrencyConverter = () => {
                 <Button 
                   variant="outline" 
                   onClick={refreshRates}
-                  className="flex-1"
+                  className="flex-1 border-white/10 hover:bg-white/5"
                   disabled={isLoading}
                 >
                   <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                   Refresh Rates
                 </Button>
-              </div>
-              
-              {/* Last Updated */}
-              <div className="text-center text-sm text-muted-foreground">
-                <p>Last updated: {lastUpdated.toLocaleTimeString()}</p>
-                <p className="mt-1 text-xs">
-                  Exchange rates are sourced from Google Finance and updated regularly.
-                </p>
               </div>
             </div>
           </div>
