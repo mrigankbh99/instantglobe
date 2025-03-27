@@ -1,3 +1,4 @@
+
 import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -62,6 +63,8 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
     controls.maxDistance = 10;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.5;
+    // Ensure controls are enabled - this fixes the click and drag rotation issue
+    controls.enabled = true;
     controlsRef.current = controls;
 
     // Setup lighting and globe
@@ -74,9 +77,6 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
     
     // Add currency markers
     addCurrencyMarkers(scene);
-    
-    // Mouse interaction setup
-    setupMouseInteractions(renderer);
     
     // Animation loop
     setupAnimationLoop();
@@ -107,14 +107,14 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
     
     // Cleanup
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', handleResize);
       
       if (rendererRef.current && rendererRef.current.domElement) {
-        rendererRef.current.domElement.removeEventListener('mousedown', handleMouseDown);
-        rendererRef.current.domElement.removeEventListener('mouseup', handleMouseUp);
-        
         mountRef.current?.removeChild(rendererRef.current.domElement);
+      }
+      
+      if (controlsRef.current) {
+        controlsRef.current.dispose();
       }
       
       clearTimeout(window.timeoutId);
@@ -123,12 +123,12 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
 
   // Helper function to setup lighting
   const setupLighting = (scene: THREE.Scene) => {
-    // Ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    // Ambient light - reduced intensity for darker appearance
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
     scene.add(ambientLight);
 
-    // Point light
-    const pointLight = new THREE.PointLight(0xffffff, 0.8);
+    // Point light - adjusted position and intensity for darker appearance
+    const pointLight = new THREE.PointLight(0xffffff, 0.6);
     pointLight.position.set(5, 3, 5);
     scene.add(pointLight);
   };
@@ -137,7 +137,7 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
   const createGlobe = () => {
     const globeGeometry = new THREE.SphereGeometry(2, 64, 64);
     
-    // Earth texture with realistic look
+    // Earth texture with darker appearance
     const textureLoader = new THREE.TextureLoader();
     const earthTexture = textureLoader.load(
       'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg'
@@ -147,12 +147,13 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
       'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_normal_2048.jpg'
     );
     
-    // Create material without the emissive properties for a more realistic look
+    // Create darker material for better fit with website theme
     const customMaterial = new THREE.MeshPhongMaterial({
       map: earthTexture,
       bumpMap: bumpMap,
       bumpScale: 0.05,
       shininess: 5,
+      color: new THREE.Color(0x777777), // Darker color overlay
     });
     
     return new THREE.Mesh(globeGeometry, customMaterial);
@@ -162,6 +163,14 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
   const addCurrencyMarkers = (scene: THREE.Scene) => {
     locations.forEach((location) => {
       const position = latLngToVector3(location.lat, location.lng);
+      
+      // Adjust position to move markers slightly outward from the globe surface
+      const direction = new THREE.Vector3(position.x, position.y, position.z).normalize();
+      const adjustedPosition = new THREE.Vector3(
+        position.x + direction.x * 0.15,
+        position.y + direction.y * 0.15,
+        position.z + direction.z * 0.15
+      );
       
       // Create text sprite for currency symbol
       const canvas = document.createElement('canvas');
@@ -184,60 +193,13 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
       });
       
       const sprite = new THREE.Sprite(spriteMaterial);
-      sprite.position.set(position.x, position.y, position.z);
+      sprite.position.set(adjustedPosition.x, adjustedPosition.y, adjustedPosition.z);
       sprite.scale.set(0.4, 0.4, 0.4);
       sprite.userData = { location: location.name, type: location.type };
       
       scene.add(sprite);
       markersRef.current[location.name] = sprite;
     });
-  };
-
-  // Helper function to handle mouse move
-  const handleMouseMove = (event: MouseEvent) => {
-    if (!rendererRef.current) return;
-    
-    const rect = rendererRef.current.domElement.getBoundingClientRect();
-    
-    mouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    
-    // Only disable auto-rotation when user interacts, if interactive mode is on
-    if (isInteractive && controlsRef.current) {
-      controlsRef.current.autoRotate = false;
-      
-      // Re-enable auto-rotation after a period of inactivity
-      clearTimeout(window.timeoutId);
-      window.timeoutId = setTimeout(() => {
-        if (controlsRef.current) {
-          controlsRef.current.autoRotate = true;
-        }
-      }, 5000);
-    }
-  };
-
-  // Helper function to handle mouse down
-  const handleMouseDown = () => {
-    if (controlsRef.current) {
-      controlsRef.current.autoRotate = false;
-    }
-  };
-
-  // Helper function to handle mouse up
-  const handleMouseUp = () => {
-    // Re-enable auto-rotation after some time
-    setTimeout(() => {
-      if (controlsRef.current) {
-        controlsRef.current.autoRotate = true;
-      }
-    }, 3000);
-  };
-
-  // Setup mouse interactions
-  const setupMouseInteractions = (renderer: THREE.WebGLRenderer) => {
-    window.addEventListener('mousemove', handleMouseMove);
-    renderer.domElement.addEventListener('mousedown', handleMouseDown);
-    renderer.domElement.addEventListener('mouseup', handleMouseUp);
   };
 
   // Setup animation loop
