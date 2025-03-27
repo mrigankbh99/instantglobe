@@ -1,7 +1,5 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-// Fix the import path for OrbitControls
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DollarSign, EuroIcon } from 'lucide-react';
 
@@ -31,6 +29,7 @@ const Globe: React.FC = () => {
   const markersRef = useRef<{ [key: string]: THREE.Object3D }>({});
   const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
   const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
+  const globeRef = useRef<THREE.Mesh | null>(null);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -60,12 +59,17 @@ const Globe: React.FC = () => {
     mountRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // Controls setup
+    // Controls setup - enable damping for smoother control
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = 0.5;
-    controls.enableZoom = false;
+    controls.enableZoom = true;
+    controls.zoomSpeed = 0.5;
+    controls.minDistance = 4;
+    controls.maxDistance = 10;
+    controls.autoRotate = true;  // Enable auto-rotation
+    controls.autoRotateSpeed = 0.5;  // Set auto-rotation speed
     controlsRef.current = controls;
 
     // Ambient light
@@ -77,7 +81,7 @@ const Globe: React.FC = () => {
     pointLight.position.set(5, 3, 5);
     scene.add(pointLight);
 
-    // Create globe - slightly larger than before but still fits well
+    // Create globe
     const globeGeometry = new THREE.SphereGeometry(2, 64, 64);
     
     // Earth texture with dark theme
@@ -96,20 +100,21 @@ const Globe: React.FC = () => {
       bumpMap: bumpMap,
       bumpScale: 0.05,
       shininess: 5,
-      color: new THREE.Color(0x888888), // Lighter color for countries
+      color: new THREE.Color(0xaaaaaa), // Lighter color for countries
       emissive: new THREE.Color(0x1a2d5b), // Subtle blue overlay
       emissiveIntensity: 0.2,
     });
     
     const globe = new THREE.Mesh(globeGeometry, customMaterial);
     scene.add(globe);
+    globeRef.current = globe;
 
-    // Add a subtle glow effect
+    // Add a subtle glow effect - reduced opacity for better visibility
     const glowGeometry = new THREE.SphereGeometry(2.1, 64, 64);
     const glowMaterial = new THREE.MeshBasicMaterial({
       color: 0x3366cc,
       transparent: true,
-      opacity: 0.1,
+      opacity: 0.08, // Reduced opacity for less flare
       side: THREE.BackSide,
     });
     
@@ -154,31 +159,41 @@ const Globe: React.FC = () => {
       scene.add(sprite);
       markersRef.current[location.name] = sprite;
     });
-
-    // Auto-rotation
-    let autoRotate = true;
-    const autoRotateSpeed = 0.001;
     
-    // Mouse hover
+    // Mouse hover and move
     const handleMouseMove = (event: MouseEvent) => {
       const rect = renderer.domElement.getBoundingClientRect();
       
       mouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       
-      if (isInteractive) {
-        autoRotate = false;
+      // Only disable auto-rotation when user interacts, if interactive mode is on
+      if (isInteractive && controlsRef.current) {
+        controlsRef.current.autoRotate = false;
+        
+        // Re-enable auto-rotation after a period of inactivity
+        clearTimeout(window.timeoutId);
+        window.timeoutId = setTimeout(() => {
+          if (controlsRef.current) {
+            controlsRef.current.autoRotate = true;
+          }
+        }, 5000);
       }
     };
     
-    // Enable/disable auto-rotation on mouse interaction
+    // Handle mouse events to control the globe
     const handleMouseDown = () => {
-      autoRotate = false;
+      if (controlsRef.current) {
+        controlsRef.current.autoRotate = false;
+      }
     };
     
     const handleMouseUp = () => {
+      // Re-enable auto-rotation after some time
       setTimeout(() => {
-        autoRotate = true;
+        if (controlsRef.current) {
+          controlsRef.current.autoRotate = true;
+        }
       }, 3000);
     };
     
@@ -190,13 +205,17 @@ const Globe: React.FC = () => {
     const animate = () => {
       requestAnimationFrame(animate);
       
-      if (autoRotate) {
-        globe.rotation.y += autoRotateSpeed;
-      }
-      
-      // Update controls
+      // Update controls for smooth damping effect
       if (controlsRef.current) {
         controlsRef.current.update();
+      }
+      
+      // Rotate currency symbols with the globe
+      // This will keep them aligned with the globe's rotation
+      if (globeRef.current) {
+        Object.values(markersRef.current).forEach(marker => {
+          marker.quaternion.copy(globeRef.current!.quaternion);
+        });
       }
       
       // Raycasting for hover effects
@@ -271,6 +290,8 @@ const Globe: React.FC = () => {
         
         mountRef.current?.removeChild(rendererRef.current.domElement);
       }
+      
+      clearTimeout(window.timeoutId);
     };
   }, []);
 
@@ -279,8 +300,8 @@ const Globe: React.FC = () => {
       ref={mountRef} 
       className="w-full h-full min-h-[500px] relative"
     >
-      {/* Add a background glare effect */}
-      <div className="absolute -inset-10 bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-emerald-500/20 rounded-full filter blur-3xl opacity-30 animate-pulse-glow"></div>
+      {/* Add a background glare effect - reduced opacity for better Earth visibility */}
+      <div className="absolute -inset-10 bg-gradient-to-br from-blue-500/10 via-purple-500/5 to-emerald-500/10 rounded-full filter blur-3xl opacity-20 animate-pulse-glow"></div>
       
       {hoveredLocation && (
         <div className="absolute top-5 left-1/2 transform -translate-x-1/2 glassmorphism px-4 py-2 rounded-full text-sm animate-fade-in">
