@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
 import { Button } from '@/components/ui/button';
 import { Globe, Menu, X } from 'lucide-react';
 
@@ -25,20 +26,22 @@ const Navbar = () => {
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
-          <Globe className="h-6 w-6 text-theme-blue mr-2" />
-          <span className="font-medium text-xl tracking-tight">Instant<span className="text-theme-blue">Globe</span></span>
+          <Link to="/" className="flex items-center">
+            <Globe className="h-6 w-6 text-theme-blue mr-2" />
+            <span className="font-medium text-xl tracking-tight">Instant<span className="text-theme-blue">Globe</span></span>
+          </Link>
         </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
+          <Link to="/converter" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
+            Currency Converter
+          </Link>
           <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
             How It Works
           </a>
           <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
             Our Rates
-          </a>
-          <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
-            Locations
           </a>
           <a href="#" className="text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200">
             About Us
@@ -69,14 +72,14 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-theme-dark/95 backdrop-blur-md absolute top-full left-0 w-full border-b border-white/5 animate-fade-in">
           <div className="container mx-auto px-6 py-4 space-y-4">
+            <Link to="/converter" className="block py-2 text-gray-300 hover:text-white">
+              Currency Converter
+            </Link>
             <a href="#" className="block py-2 text-gray-300 hover:text-white">
               How It Works
             </a>
             <a href="#" className="block py-2 text-gray-300 hover:text-white">
               Our Rates
-            </a>
-            <a href="#" className="block py-2 text-gray-300 hover:text-white">
-              Locations
             </a>
             <a href="#" className="block py-2 text-gray-300 hover:text-white">
               About Us
