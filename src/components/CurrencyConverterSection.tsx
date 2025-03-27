@@ -23,12 +23,12 @@ const currencies = [
 // Fixed target currency
 const targetCurrency = { code: 'INR', country: 'India', flag: '🇮🇳', symbol: '₹' };
 
-// Comparison data for different providers
-const comparisonData = [
+// Comparison data for different providers with fees calculation
+const getComparisonData = (baseRate: number, currencyCode: string, amount: number) => [
   { 
     provider: 'Our Service', 
-    exchangeRate: 'Google Forex Rate', 
-    theyReceive: '83.12 ₹',
+    exchangeRate: `${baseRate.toFixed(2)} ₹`, 
+    theyReceive: `${(amount * baseRate).toFixed(2)} ₹`,
     fees: 'Zero Fees', 
     transferTime: 'Instant', 
     rateTransparency: true, 
@@ -37,8 +37,8 @@ const comparisonData = [
   },
   { 
     provider: 'Wise', 
-    exchangeRate: '0.5-1% below Google', 
-    theyReceive: '82.50 ₹',
+    exchangeRate: `${(baseRate * 0.995).toFixed(2)} ₹`, 
+    theyReceive: `${(amount * baseRate * 0.995 - 3).toFixed(2)} ₹`,
     fees: '$3-9 per transfer', 
     transferTime: '1-2 days', 
     rateTransparency: true, 
@@ -47,8 +47,8 @@ const comparisonData = [
   },
   { 
     provider: 'Remitly', 
-    exchangeRate: '1-1.5% below Google', 
-    theyReceive: '81.89 ₹',
+    exchangeRate: `${(baseRate * 0.985).toFixed(2)} ₹`, 
+    theyReceive: `${(amount * baseRate * 0.985 - 3.99).toFixed(2)} ₹`,
     fees: '$3.99 per transfer', 
     transferTime: '3-5 days', 
     rateTransparency: false, 
@@ -57,8 +57,8 @@ const comparisonData = [
   },
   { 
     provider: 'Western Union', 
-    exchangeRate: '1.5-2% below Google', 
-    theyReceive: '81.46 ₹',
+    exchangeRate: `${(baseRate * 0.975).toFixed(2)} ₹`, 
+    theyReceive: `${(amount * baseRate * 0.975 - 5).toFixed(2)} ₹`,
     fees: '$5-10 per transfer', 
     transferTime: '2-3 days', 
     rateTransparency: false, 
@@ -67,8 +67,8 @@ const comparisonData = [
   },
   { 
     provider: 'Banks', 
-    exchangeRate: '3-4% below Google', 
-    theyReceive: '79.79 ₹',
+    exchangeRate: `${(baseRate * 0.965).toFixed(2)} ₹`, 
+    theyReceive: `${(amount * baseRate * 0.965 - 25).toFixed(2)} ₹`,
     fees: '$25-45 per transfer', 
     transferTime: '3-5 days', 
     rateTransparency: false, 
@@ -84,6 +84,7 @@ const CurrencyConverterSection = () => {
   const [rate, setRate] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState('');
+  const [comparisonData, setComparisonData] = useState(getComparisonData(83.12, 'USD', 100));
 
   // Find currency object by code
   const findCurrencyByCode = (code: string) => {
@@ -111,6 +112,9 @@ const CurrencyConverterSection = () => {
       setRate(fetchedRate);
       setConvertedAmount(amount * fetchedRate);
       setLastUpdated(new Date().toLocaleTimeString());
+      
+      // Update comparison data with new rate and amount
+      setComparisonData(getComparisonData(fetchedRate, from, amount));
     } catch (error) {
       console.error("Error fetching exchange rate:", error);
     } finally {
@@ -126,7 +130,9 @@ const CurrencyConverterSection = () => {
   // Update converted amount when amount or rate changes
   useEffect(() => {
     setConvertedAmount(amount * rate);
-  }, [amount, rate]);
+    // Update comparison data with new amount
+    setComparisonData(getComparisonData(rate, sourceCurrency.code, amount));
+  }, [amount, rate, sourceCurrency.code]);
 
   // Handle source currency change
   const handleSourceCurrencyChange = (value: string) => {
@@ -256,7 +262,7 @@ const CurrencyConverterSection = () => {
             How We <span className="text-indigo-400">Compare</span>
           </h2>
           <p className="text-gray-300 max-w-3xl mx-auto">
-            See how our service stacks up against traditional remittance options.
+            See how our service stacks up against traditional remittance options when sending {amount} {sourceCurrency.code}.
           </p>
         </div>
 
@@ -266,7 +272,7 @@ const CurrencyConverterSection = () => {
               <tr>
                 <th className="py-4 px-6 text-left text-sm font-medium text-indigo-300">Provider</th>
                 <th className="py-4 px-6 text-left text-sm font-medium text-indigo-300">Exchange Rate (1 {sourceCurrency.code})</th>
-                <th className="py-4 px-6 text-left text-sm font-medium text-indigo-300">They Receive (INR)</th>
+                <th className="py-4 px-6 text-left text-sm font-medium text-indigo-300">They Receive (for {amount} {sourceCurrency.code})</th>
                 <th className="py-4 px-6 text-left text-sm font-medium text-indigo-300">Fees</th>
                 <th className="py-4 px-6 text-left text-sm font-medium text-indigo-300">Transfer Time</th>
               </tr>
