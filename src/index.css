@@ -110,4 +110,33 @@
   .gradient-btn:hover {
     background: linear-gradient(to right, #5428cc, #00adeb);
   }
+  
+  /* Enhanced animations */
+  .floating {
+    animation: floating 6s ease-in-out infinite;
+  }
+  
+  @keyframes floating {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+    }
+    25% {
+      transform: translateY(-10px) translateX(5px);
+    }
+    50% {
+      transform: translateY(0) translateX(10px);
+    }
+    75% {
+      transform: translateY(10px) translateX(5px);
+    }
+  }
+  
+  /* Improved glow effects */
+  .glow-effect {
+    box-shadow: 0 0 15px rgba(102, 51, 238, 0.3), 0 0 30px rgba(0, 194, 255, 0.2);
+  }
+  
+  .text-glow-subtle {
+    text-shadow: 0 0 10px rgba(102, 51, 238, 0.2), 0 0 20px rgba(0, 194, 255, 0.1);
+  }
 }
