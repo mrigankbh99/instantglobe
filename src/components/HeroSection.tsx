@@ -78,15 +78,13 @@ const HeroSection = () => {
           </div>
           
           <div className="mt-10 flex items-center justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            <div className="flex items-center">
+            <div className="inline-flex items-center bg-gradient-to-r from-indigo-600/30 to-purple-600/30 backdrop-blur-sm px-4 py-2 rounded-full border border-indigo-400/30 shadow-lg hover:shadow-indigo-600/20 transition-all duration-300">
               <img 
                 src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" 
                 alt="USDC Logo"
-                className="w-10 h-10 mr-3"
+                className="w-6 h-6 mr-2"
               />
-              <div>
-                <div className="text-white font-medium">Powered by Stablecoins</div>
-              </div>
+              <div className="text-white text-sm font-medium">Powered by Stablecoins</div>
             </div>
           </div>
         </div>
