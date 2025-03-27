@@ -1,12 +1,33 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import Globe from './Globe';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Input } from '@/components/ui/input';
+import { useToast } from "@/components/ui/use-toast";
 
 const HeroSection = () => {
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const handleWaitlistSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setEmail('');
+      toast({
+        title: "You've joined the waitlist!",
+        description: "We'll notify you when we launch.",
+        duration: 5000,
+      });
+    }, 1000);
+  };
   
   return (
     <section className="relative min-h-screen pt-20 overflow-hidden">
@@ -47,7 +68,7 @@ const HeroSection = () => {
           
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
             <Button className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-6 py-5 sm:px-8 sm:py-6 text-lg font-medium transition-all duration-300 transform hover:scale-105">
-              Start Sending Now
+              Join Waitlist
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             
@@ -57,26 +78,15 @@ const HeroSection = () => {
           </div>
           
           <div className="mt-10 flex items-center justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-            <div className="flex -space-x-2">
+            <div className="flex items-center">
               <img 
-                src="https://randomuser.me/api/portraits/women/32.jpg" 
-                alt="User"
-                className="w-10 h-10 rounded-full border-2 border-theme-dark"
+                src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png" 
+                alt="USDC Logo"
+                className="w-10 h-10 mr-3"
               />
-              <img 
-                src="https://randomuser.me/api/portraits/men/54.jpg" 
-                alt="User"
-                className="w-10 h-10 rounded-full border-2 border-theme-dark"
-              />
-              <img 
-                src="https://randomuser.me/api/portraits/women/67.jpg" 
-                alt="User"
-                className="w-10 h-10 rounded-full border-2 border-theme-dark"
-              />
-            </div>
-            <div className="ml-4">
-              <div className="text-sm text-gray-400">Trusted by</div>
-              <div className="text-white font-medium">20,000+ customers</div>
+              <div>
+                <div className="text-white font-medium">Powered by Stablecoins</div>
+              </div>
             </div>
           </div>
         </div>
@@ -111,12 +121,12 @@ const HeroSection = () => {
           <div className="flex items-center justify-center md:justify-start space-x-4 p-2 md:p-4">
             <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-full bg-indigo-600/20 flex items-center justify-center">
               <svg className="w-5 h-5 md:w-6 md:h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
               </svg>
             </div>
             <div>
-              <h3 className="font-medium">Secure & Safe</h3>
-              <p className="text-xs md:text-sm text-gray-400">Bank-level encryption</p>
+              <h3 className="font-medium">Google Rates</h3>
+              <p className="text-xs md:text-sm text-gray-400">Real-time exchange rates</p>
             </div>
           </div>
           
@@ -129,6 +139,40 @@ const HeroSection = () => {
             <div>
               <h3 className="font-medium">Zero Fees</h3>
               <p className="text-xs md:text-sm text-gray-400">No hidden charges</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Waitlist Section */}
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 pb-20 animate-fade-in-up" style={{ animationDelay: '0.9s' }}>
+        <div className="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 backdrop-blur-md border border-white/10 rounded-xl p-6 md:p-8 mt-6">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Join Our Waitlist</h2>
+            <p className="text-gray-300 mb-6">Be the first to know when we launch. Get early access and exclusive offers.</p>
+            
+            <form onSubmit={handleWaitlistSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="flex-grow bg-white/10 border-white/20 text-white placeholder:text-gray-400"
+              />
+              <Button 
+                type="submit" 
+                className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Joining...' : 'Join Now'}
+                {!isSubmitting && <ArrowRight className="ml-2 h-4 w-4" />}
+              </Button>
+            </form>
+            
+            <div className="mt-4 flex items-center justify-center text-sm text-gray-400">
+              <CheckCircle2 className="h-4 w-4 mr-2 text-indigo-400" />
+              <span>We'll never share your email with anyone else</span>
             </div>
           </div>
         </div>

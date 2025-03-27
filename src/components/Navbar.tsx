@@ -48,7 +48,7 @@ const Navbar = () => {
         {/* CTA Button */}
         <div className="hidden md:block">
           <Button className="bg-theme-blue hover:bg-theme-blue/90 text-white rounded-full px-6 py-2 transition-all duration-300 transform hover:scale-105">
-            Send Money Now
+            Join Waitlist
           </Button>
         </div>
 
@@ -82,7 +82,7 @@ const Navbar = () => {
               About Us
             </a>
             <Button className="w-full bg-theme-blue hover:bg-theme-blue/90 text-white rounded-full py-2">
-              Send Money Now
+              Join Waitlist
             </Button>
           </div>
         </div>
