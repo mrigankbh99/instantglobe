@@ -111,8 +111,9 @@ const HomeConverterWidget = () => {
                 type="number"
                 value={amount}
                 onChange={handleAmountChange}
-                className="bg-theme-dark/50 border-white/10 focus-visible:ring-indigo-500 focus-visible:border-indigo-500/20 h-11"
+                className="bg-theme-dark/50 border-white/10 focus-visible:ring-indigo-500 focus-visible:border-indigo-500/20 h-11 appearance-none"
                 placeholder="Enter amount"
+                style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
               />
               <Select
                 value={sourceCurrency.code}
@@ -162,6 +163,7 @@ const HomeConverterWidget = () => {
                 value={convertedAmount.toFixed(2)}
                 readOnly
                 className="bg-theme-dark/50 border-white/10 h-11 cursor-not-allowed"
+                style={{ WebkitAppearance: "none", MozAppearance: "textfield" }}
               />
               <div className="w-28 h-11 px-4 border border-white/10 rounded-md bg-theme-dark/50 flex items-center space-x-2">
                 <span className="mr-1 text-base">{targetCurrency.flag}</span>
