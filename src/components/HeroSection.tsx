@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -171,6 +170,49 @@ const HeroSection = () => {
             <div className="mt-4 flex items-center justify-center text-sm text-gray-400">
               <CheckCircle2 className="h-4 w-4 mr-2 text-indigo-400" />
               <span>We'll never share your email with anyone else</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Live Rates Section */}
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 pb-20 animate-fade-in-up" style={{ animationDelay: '1s' }}>
+        <div className="bg-gradient-to-r from-indigo-900/30 to-purple-900/30 backdrop-blur-md border border-white/10 rounded-xl p-6 md:p-8 mt-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="text-center md:text-left">
+                <h2 className="text-2xl md:text-3xl font-bold mb-2">Check Our Live Rates</h2>
+                <p className="text-gray-300 mb-4">Get real-time exchange rates for sending money to India.</p>
+                <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                  <div className="bg-indigo-950/50 backdrop-blur-sm border border-indigo-500/20 rounded-lg p-4 w-32">
+                    <div className="text-xs text-indigo-300 mb-1">USD → INR</div>
+                    <div className="text-xl font-semibold">₹83.24</div>
+                  </div>
+                  <div className="bg-indigo-950/50 backdrop-blur-sm border border-indigo-500/20 rounded-lg p-4 w-32">
+                    <div className="text-xs text-indigo-300 mb-1">GBP → INR</div>
+                    <div className="text-xl font-semibold">₹104.75</div>
+                  </div>
+                  <div className="bg-indigo-950/50 backdrop-blur-sm border border-indigo-500/20 rounded-lg p-4 w-32">
+                    <div className="text-xs text-indigo-300 mb-1">AED → INR</div>
+                    <div className="text-xl font-semibold">₹22.65</div>
+                  </div>
+                </div>
+                <div className="mt-2 inline-flex items-center text-xs text-gray-400">
+                  <span className="mr-1">*</span> Rates updated every 60 minutes
+                </div>
+              </div>
+              <div className="flex flex-col items-center md:items-end mt-4 md:mt-0">
+                <Button 
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-6 py-3 text-base font-medium transition-all duration-300 transform hover:scale-105 w-full md:w-auto"
+                  onClick={() => window.location.href = '/converter'}
+                >
+                  Try Currency Converter
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <div className="mt-3 inline-flex items-center justify-center px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500/20 to-cyan-500/20 border border-indigo-500/30">
+                  <span className="text-xs font-medium text-cyan-300">Zero Fees on all transfers</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
