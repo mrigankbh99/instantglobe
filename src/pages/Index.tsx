@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import Navbar from '@/components/Navbar';
+import NavbarWithTheme from '@/components/NavbarWithTheme';
 import HeroSection from '@/components/HeroSection';
 import RateComparisonSection from '@/components/RateComparisonSection';
 import Footer from '@/components/Footer';
@@ -9,11 +9,20 @@ const Index = () => {
   useEffect(() => {
     // Set page title
     document.title = "InstantGlobe | Send Money to India Instantly";
+    
+    // Apply saved theme on initial load
+    const savedTheme = localStorage.getItem('instantglobe-theme') || 'default';
+    const htmlElement = document.documentElement;
+    
+    // Only apply if it's not the default theme
+    if (savedTheme !== 'default' && savedTheme) {
+      htmlElement.classList.add(`theme-${savedTheme}`);
+    }
   }, []);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-theme-dark font-poppins">
-      <Navbar />
+      <NavbarWithTheme />
       <HeroSection />
       <RateComparisonSection />
       

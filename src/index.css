@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
@@ -38,6 +37,130 @@
 
     --radius: 0.75rem;
   }
+
+  /* Teal Theme */
+  .theme-teal {
+    --background: 220 35% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 35% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 35% 7%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 175 84% 32%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 25% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 25% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 180 100% 35%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 25% 18%;
+    --input: 220 25% 18%;
+    --ring: 175 84% 32%;
+  }
+
+  /* Rose Gold Theme */
+  .theme-rose-gold {
+    --background: 240 15% 7%;
+    --foreground: 20 40% 98%;
+
+    --card: 240 15% 9%;
+    --card-foreground: 20 40% 98%;
+
+    --popover: 240 15% 7%;
+    --popover-foreground: 20 40% 98%;
+
+    --primary: 355 65% 65%;
+    --primary-foreground: 20 40% 98%;
+
+    --secondary: 240 15% 18%;
+    --secondary-foreground: 20 40% 98%;
+
+    --muted: 240 15% 18%;
+    --muted-foreground: 20 20% 65%;
+
+    --accent: 30 60% 80%;
+    --accent-foreground: 240 15% 15%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 20 40% 98%;
+
+    --border: 240 15% 18%;
+    --input: 240 15% 18%;
+    --ring: 355 65% 65%;
+  }
+
+  /* Green Theme */
+  .theme-green {
+    --background: 220 25% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 25% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 25% 7%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 120 55% 45%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 25% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 25% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 160 55% 45%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 25% 18%;
+    --input: 220 25% 18%;
+    --ring: 120 55% 45%;
+  }
+
+  /* Electric Blue Theme */
+  .theme-electric-blue {
+    --background: 235 40% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 235 40% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 235 40% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 195 100% 50%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 235 40% 20%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 235 40% 20%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 225 95% 65%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 235 40% 20%;
+    --input: 235 40% 20%;
+    --ring: 195 100% 50%;
+  }
 }
 
 @layer base {
@@ -55,6 +178,38 @@
       radial-gradient(circle at 15% 15%, rgba(102, 51, 238, 0.08) 0%, transparent 25%),
       radial-gradient(circle at 85% 85%, rgba(0, 194, 255, 0.08) 0%, transparent 25%),
       radial-gradient(circle at 50% 50%, rgba(72, 45, 120, 0.06) 0%, transparent 30%);
+  }
+
+  /* Teal Theme Background */
+  .theme-teal body {
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(20, 184, 166, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, rgba(15, 118, 110, 0.06) 0%, transparent 30%);
+  }
+
+  /* Rose Gold Theme Background */
+  .theme-rose-gold body {
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(225, 29, 72, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 85% 85%, rgba(234, 179, 8, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, rgba(190, 24, 93, 0.06) 0%, transparent 30%);
+  }
+
+  /* Green Theme Background */
+  .theme-green body {
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(34, 197, 94, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, rgba(20, 83, 45, 0.06) 0%, transparent 30%);
+  }
+
+  /* Electric Blue Theme Background */
+  .theme-electric-blue body {
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 85% 85%, rgba(99, 102, 241, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 30%);
   }
 }
 

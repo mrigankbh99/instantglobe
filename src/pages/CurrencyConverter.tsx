@@ -1,26 +1,28 @@
 
 import React, { useEffect } from 'react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import NavbarWithTheme from '@/components/NavbarWithTheme';
 import CurrencyConverterSection from '@/components/CurrencyConverterSection';
+import Footer from '@/components/Footer';
 
 const CurrencyConverter = () => {
   useEffect(() => {
     // Set page title
-    document.title = "InstantGlobe | Live Currency Converter";
+    document.title = "Currency Converter | InstantGlobe";
+    
+    // Apply saved theme on initial load
+    const savedTheme = localStorage.getItem('instantglobe-theme') || 'default';
+    const htmlElement = document.documentElement;
+    
+    // Only apply if it's not the default theme
+    if (savedTheme !== 'default' && savedTheme) {
+      htmlElement.classList.add(`theme-${savedTheme}`);
+    }
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-theme-dark font-poppins">
-      <Navbar />
-      <div className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-semibold text-center mb-2 tracking-tight">
-          Live Currency Converter
-        </h1>
-        <p className="text-theme-gray text-center max-w-2xl mx-auto mb-12">
-          Convert your currency to Indian Rupees (INR) with our real-time converter. 
-          Get the most competitive rates with zero transaction fees.
-        </p>
+    <div className="min-h-screen bg-theme-dark overflow-x-hidden">
+      <NavbarWithTheme />
+      <div className="pt-24 pb-16">
         <CurrencyConverterSection />
       </div>
       <Footer />
