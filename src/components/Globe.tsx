@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Location {
   name: string;
@@ -28,8 +29,8 @@ const Globe: React.FC = () => {
   const globeRef = useRef<THREE.Mesh | null>(null);
   const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
   const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
-  // Fix: Update the type definition to specifically store THREE.Mesh objects
   const highlightedAreasRef = useRef<{[key: string]: THREE.Mesh}>({});
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -45,8 +46,8 @@ const Globe: React.FC = () => {
       0.1, 
       1000
     );
-    // Adjusted camera position to accommodate larger globe
-    camera.position.z = 8;
+    // Adjust camera position based on device
+    camera.position.z = isMobile ? 10 : 8;
     cameraRef.current = camera;
 
     // Renderer setup
@@ -76,8 +77,8 @@ const Globe: React.FC = () => {
     pointLight.position.set(5, 3, 5);
     scene.add(pointLight);
 
-    // Add a background glow effect - REDUCED SIZE TO AVOID GETTING CUT OFF
-    const bgGlowGeometry = new THREE.SphereGeometry(2.4, 64, 64); // Reduced from 2.8 to 2.4
+    // Add a background glow effect
+    const bgGlowGeometry = new THREE.SphereGeometry(2.3, 64, 64); // Reduced to prevent cutoff
     const bgGlowMaterial = new THREE.MeshBasicMaterial({
       color: 0x1E3A8A,
       transparent: true,
@@ -87,8 +88,9 @@ const Globe: React.FC = () => {
     const bgGlow = new THREE.Mesh(bgGlowGeometry, bgGlowMaterial);
     scene.add(bgGlow);
 
-    // Create globe
-    const globeGeometry = new THREE.SphereGeometry(2.0, 64, 64);
+    // Create globe with size responsive to device
+    const globeSize = isMobile ? 1.8 : 2.0;
+    const globeGeometry = new THREE.SphereGeometry(globeSize, 64, 64);
     
     // Earth texture with dark theme
     const textureLoader = new THREE.TextureLoader();
@@ -116,7 +118,7 @@ const Globe: React.FC = () => {
     globeRef.current = globe;
 
     // Add a subtle glow effect
-    const glowGeometry = new THREE.SphereGeometry(2.1, 64, 64);
+    const glowGeometry = new THREE.SphereGeometry(globeSize * 1.05, 64, 64);
     const glowMaterial = new THREE.MeshBasicMaterial({
       color: 0x4169E1,
       transparent: true,
@@ -127,7 +129,7 @@ const Globe: React.FC = () => {
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
     scene.add(glowMesh);
 
-    // Create a parent object for all location highlights - this is key for rotation sync
+    // Create a parent object for all location highlights
     const highlightsGroup = new THREE.Group();
     scene.add(highlightsGroup);
     globe.add(highlightsGroup);  // Add as a child of the globe for synchronized rotation
@@ -138,14 +140,15 @@ const Globe: React.FC = () => {
       const phi = (90 - location.lat) * (Math.PI / 180);
       const theta = (location.lng + 180) * (Math.PI / 180);
       
-      // Calculate position on the globe surface - slightly increased offset for better visibility
-      const radius = 2.01;  // Just slightly above the globe surface
+      // Calculate position on the globe surface
+      const radius = globeSize * 1.005;  // Just slightly above the globe surface
       const x = -radius * Math.sin(phi) * Math.cos(theta);
       const y = radius * Math.cos(phi);
       const z = radius * Math.sin(phi) * Math.sin(theta);
       
-      // Create a smaller highlight
-      const highlightGeometry = new THREE.CircleGeometry(0.15, 32);  // Reduced from 0.25 to 0.15
+      // Create an appropriately sized highlight based on device
+      const highlightSize = isMobile ? 0.12 : 0.15;
+      const highlightGeometry = new THREE.CircleGeometry(highlightSize, 32);
       
       // Set color based on location type
       const highlightColor = location.type === 'source' ? 0x1EAEDB : 0x34D399;
@@ -194,6 +197,19 @@ const Globe: React.FC = () => {
       }
     };
     
+    // Touch events for mobile
+    const handleTouchStart = (event: TouchEvent) => {
+      if (event.touches.length === 1) {
+        const touch = event.touches[0];
+        const rect = renderer.domElement.getBoundingClientRect();
+        
+        mouseRef.current.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+        mouseRef.current.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+        
+        autoRotate = false;
+      }
+    };
+    
     // Enable/disable auto-rotation on mouse interaction
     const handleMouseDown = () => {
       autoRotate = false;
@@ -205,7 +221,15 @@ const Globe: React.FC = () => {
       }, 3000);
     };
     
+    const handleTouchEnd = () => {
+      setTimeout(() => {
+        autoRotate = true;
+      }, 3000);
+    };
+    
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
     renderer.domElement.addEventListener('mousedown', handleMouseDown);
     renderer.domElement.addEventListener('mouseup', handleMouseUp);
     
@@ -290,6 +314,8 @@ const Globe: React.FC = () => {
     // Cleanup
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('resize', handleResize);
       
       if (rendererRef.current && rendererRef.current.domElement) {
@@ -299,15 +325,15 @@ const Globe: React.FC = () => {
         mountRef.current?.removeChild(rendererRef.current.domElement);
       }
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <div 
       ref={mountRef} 
-      className="w-full h-full min-h-[500px]"
+      className="w-full h-full min-h-[300px] md:min-h-[500px]"
     >
       {hoveredLocation && (
-        <div className="absolute top-5 left-1/2 transform -translate-x-1/2 glassmorphism px-4 py-2 rounded-full text-sm animate-fade-in">
+        <div className="absolute top-2 md:top-5 left-1/2 transform -translate-x-1/2 glassmorphism px-4 py-2 rounded-full text-sm animate-fade-in">
           {hoveredLocation}
         </div>
       )}
