@@ -1,4 +1,3 @@
-
 import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -61,8 +60,8 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
     controls.zoomSpeed = 0.5;
     controls.minDistance = 4;
     controls.maxDistance = 10;
-    controls.autoRotate = true;  // Enable auto-rotation
-    controls.autoRotateSpeed = 0.5;  // Set auto-rotation speed
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
     controlsRef.current = controls;
 
     // Setup lighting and globe
@@ -71,10 +70,8 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
     scene.add(globe);
     globeRef.current = globe;
     
-    // Add glow effect
-    const glowMesh = createGlowEffect();
-    scene.add(glowMesh);
-
+    // No glow effect for a more realistic Earth look
+    
     // Add currency markers
     addCurrencyMarkers(scene);
     
@@ -140,7 +137,7 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
   const createGlobe = () => {
     const globeGeometry = new THREE.SphereGeometry(2, 64, 64);
     
-    // Earth texture with dark theme
+    // Earth texture with realistic look
     const textureLoader = new THREE.TextureLoader();
     const earthTexture = textureLoader.load(
       'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg'
@@ -150,31 +147,15 @@ export const useGlobeScene = (): GlobeSceneHookResult => {
       'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_normal_2048.jpg'
     );
     
-    // Create custom shader material for dark earth with lighter countries
+    // Create material without the emissive properties for a more realistic look
     const customMaterial = new THREE.MeshPhongMaterial({
       map: earthTexture,
       bumpMap: bumpMap,
       bumpScale: 0.05,
       shininess: 5,
-      color: new THREE.Color(0xaaaaaa), // Lighter color for countries
-      emissive: new THREE.Color(0x1a2d5b), // Subtle blue overlay
-      emissiveIntensity: 0.2,
     });
     
     return new THREE.Mesh(globeGeometry, customMaterial);
-  };
-
-  // Helper function to create glow effect
-  const createGlowEffect = () => {
-    const glowGeometry = new THREE.SphereGeometry(2.1, 64, 64);
-    const glowMaterial = new THREE.MeshBasicMaterial({
-      color: 0x3366cc,
-      transparent: true,
-      opacity: 0.08, // Reduced opacity for less flare
-      side: THREE.BackSide,
-    });
-    
-    return new THREE.Mesh(glowGeometry, glowMaterial);
   };
 
   // Helper function to add currency markers
