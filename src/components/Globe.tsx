@@ -1,7 +1,6 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-// Fix the import path for OrbitControls
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 interface Location {
@@ -26,9 +25,10 @@ const Globe: React.FC = () => {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
-  const markersRef = useRef<{ [key: string]: THREE.Mesh }>({});
+  const globeRef = useRef<THREE.Mesh | null>(null);
   const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
   const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
+  const highlightedAreasRef = useRef<{[key: string]: THREE.Mesh}>({});
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -44,8 +44,8 @@ const Globe: React.FC = () => {
       0.1, 
       1000
     );
-    // Move camera back to see the smaller globe
-    camera.position.z = 7;
+    // Adjusted camera position to accommodate larger globe
+    camera.position.z = 8;
     cameraRef.current = camera;
 
     // Renderer setup
@@ -66,17 +66,28 @@ const Globe: React.FC = () => {
     controls.enableZoom = false;
     controlsRef.current = controls;
 
-    // Ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+    // Ambient light - increase intensity
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
-    // Point light
-    const pointLight = new THREE.PointLight(0xffffff, 0.8);
+    // Point light - make brighter
+    const pointLight = new THREE.PointLight(0xffffff, 1.2);
     pointLight.position.set(5, 3, 5);
     scene.add(pointLight);
 
-    // Create globe - make it smaller (1.5 instead of 2)
-    const globeGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+    // Add a background glow effect
+    const bgGlowGeometry = new THREE.SphereGeometry(2.8, 64, 64);
+    const bgGlowMaterial = new THREE.MeshBasicMaterial({
+      color: 0x1E3A8A,
+      transparent: true,
+      opacity: 0.1,
+      side: THREE.BackSide,
+    });
+    const bgGlow = new THREE.Mesh(bgGlowGeometry, bgGlowMaterial);
+    scene.add(bgGlow);
+
+    // Create globe - make it larger (2.0 instead of 1.5)
+    const globeGeometry = new THREE.SphereGeometry(2.0, 64, 64);
     
     // Earth texture with dark theme
     const textureLoader = new THREE.TextureLoader();
@@ -93,71 +104,69 @@ const Globe: React.FC = () => {
       map: earthTexture,
       bumpMap: bumpMap,
       bumpScale: 0.05,
-      shininess: 5,
-      color: new THREE.Color(0x666666), // Lighter color for countries
-      emissive: new THREE.Color(0x112244),
-      emissiveIntensity: 0.1,
+      shininess: 10,
+      color: new THREE.Color(0x888888), // Lighter color for better visibility
+      emissive: new THREE.Color(0x223355),
+      emissiveIntensity: 0.2,
     });
     
     const globe = new THREE.Mesh(globeGeometry, customMaterial);
     scene.add(globe);
+    globeRef.current = globe;
 
-    // Add a subtle glow effect - adjust for smaller globe
-    const glowGeometry = new THREE.SphereGeometry(1.6, 64, 64);
+    // Add a subtle glow effect
+    const glowGeometry = new THREE.SphereGeometry(2.1, 64, 64);
     const glowMaterial = new THREE.MeshBasicMaterial({
-      color: 0x0a1a2a,
+      color: 0x4169E1,
       transparent: true,
-      opacity: 0.15,
+      opacity: 0.1,
       side: THREE.BackSide,
     });
     
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
     scene.add(glowMesh);
 
-    // Add location markers - adjust for smaller globe
-    locations.forEach((location) => {
-      // Convert lat/lng to 3D coordinates - adjusted for smaller radius (1.5)
+    // Add colored overlays for highlighted countries instead of markers
+    const highlightCountry = (location: Location) => {
+      // Convert lat/lng to 3D coordinates
       const phi = (90 - location.lat) * (Math.PI / 180);
       const theta = (location.lng + 180) * (Math.PI / 180);
       
-      const x = -1.5 * Math.sin(phi) * Math.cos(theta);
-      const y = 1.5 * Math.cos(phi);
-      const z = 1.5 * Math.sin(phi) * Math.sin(theta);
+      const x = -2.02 * Math.sin(phi) * Math.cos(theta);
+      const y = 2.02 * Math.cos(phi);
+      const z = 2.02 * Math.sin(phi) * Math.sin(theta);
       
-      // Create marker
-      const markerGeometry = new THREE.SphereGeometry(0.04, 16, 16);
+      // Create a small polygon as a highlight
+      const highlightGeometry = new THREE.CircleGeometry(0.25, 32);
       
       // Set color based on location type
-      const markerColor = location.type === 'source' ? 0x1EAEDB : 0x34D399;
+      const highlightColor = location.type === 'source' ? 0x1EAEDB : 0x34D399;
       
-      const markerMaterial = new THREE.MeshBasicMaterial({
-        color: markerColor,
+      const highlightMaterial = new THREE.MeshBasicMaterial({
+        color: highlightColor,
         transparent: true,
-        opacity: 0.9,
+        opacity: 0.8,
+        side: THREE.DoubleSide
       });
       
-      const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-      marker.position.set(x, y, z);
-      marker.userData = { location: location.name, type: location.type };
+      const highlight = new THREE.Mesh(highlightGeometry, highlightMaterial);
       
-      scene.add(marker);
-      markersRef.current[location.name] = marker;
+      // Position the highlight on the globe
+      highlight.position.set(x, y, z);
       
-      // Add pulse effect - adjust size for smaller globe
-      const pulseGeometry = new THREE.SphereGeometry(0.06, 16, 16);
-      const pulseMaterial = new THREE.MeshBasicMaterial({
-        color: markerColor,
-        transparent: true,
-        opacity: 0.4,
-      });
+      // Orient the highlight to face outward from the center of the globe
+      highlight.lookAt(0, 0, 0);
+      highlight.rotateY(Math.PI);
       
-      const pulse = new THREE.Mesh(pulseGeometry, pulseMaterial);
-      pulse.position.set(x, y, z);
-      pulse.scale.set(1, 1, 1);
-      pulse.userData = { isPulse: true, baseSize: 1, location: location.name };
+      highlight.userData = { location: location.name, type: location.type };
+      scene.add(highlight);
       
-      scene.add(pulse);
-    });
+      // Store reference to this highlight
+      highlightedAreasRef.current[location.name] = highlight;
+    };
+
+    // Highlight all countries
+    locations.forEach(highlightCountry);
 
     // Auto-rotation
     let autoRotate = true;
@@ -194,8 +203,13 @@ const Globe: React.FC = () => {
     const animate = () => {
       requestAnimationFrame(animate);
       
-      if (autoRotate) {
-        globe.rotation.y += autoRotateSpeed;
+      if (autoRotate && globeRef.current) {
+        globeRef.current.rotation.y += autoRotateSpeed;
+        
+        // Also rotate the highlighted areas with the globe
+        Object.values(highlightedAreasRef.current).forEach(highlight => {
+          highlight.rotation.y += autoRotateSpeed;
+        });
       }
       
       // Update controls
@@ -211,35 +225,29 @@ const Globe: React.FC = () => {
       
       for (let i = 0; i < intersects.length; i++) {
         const object = intersects[i].object;
-        if (object.userData && object.userData.location && !object.userData.isPulse) {
+        if (object.userData && object.userData.location) {
           hoveredMarker = object.userData.location;
           setHoveredLocation(object.userData.location);
+          
+          // Make the hovered highlight pulse
+          const highlight = highlightedAreasRef.current[object.userData.location];
+          if (highlight) {
+            highlight.scale.set(1.2, 1.2, 1.2);
+            (highlight.material as THREE.MeshBasicMaterial).opacity = 0.9;
+          }
           break;
         }
       }
       
       if (!hoveredMarker) {
         setHoveredLocation(null);
+        
+        // Reset all highlights to normal
+        Object.values(highlightedAreasRef.current).forEach(highlight => {
+          highlight.scale.set(1, 1, 1);
+          (highlight.material as THREE.MeshBasicMaterial).opacity = 0.8;
+        });
       }
-      
-      // Pulse animation
-      scene.children.forEach((child) => {
-        if (child.userData && child.userData.isPulse) {
-          const locationName = child.userData.location;
-          
-          // If this pulse's marker is hovered, make it pulse more dramatically
-          if (hoveredLocation === locationName) {
-            child.scale.x = 1 + Math.sin(Date.now() * 0.005) * 0.5;
-            child.scale.y = 1 + Math.sin(Date.now() * 0.005) * 0.5;
-            child.scale.z = 1 + Math.sin(Date.now() * 0.005) * 0.5;
-          } else {
-            // Normal subtle pulsing
-            child.scale.x = 1 + Math.sin(Date.now() * 0.003) * 0.2;
-            child.scale.y = 1 + Math.sin(Date.now() * 0.003) * 0.2;
-            child.scale.z = 1 + Math.sin(Date.now() * 0.003) * 0.2;
-          }
-        }
-      });
       
       renderer.render(scene, camera);
     };

@@ -53,12 +53,13 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-        // Custom colors
-        'theme-dark': '#0A0E17',
-        'theme-blue': '#1EAEDB',
-        'theme-green': '#34D399',
-        'theme-gray': '#8E9196',
+        // Custom colors - updated to indigo/purple/cyan theme
+        'theme-dark': '#0A0E22',
+        'theme-blue': '#6366F1', // Indigo
+        'theme-green': '#38BDF8', // Cyan
+        'theme-gray': '#94A3B8',
         'theme-light': '#F9FAFB',
+        'theme-purple': '#8B5CF6', // Purple
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
