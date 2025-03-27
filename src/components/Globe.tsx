@@ -47,7 +47,7 @@ const Globe: React.FC = () => {
       1000
     );
     // Adjust camera position based on device
-    camera.position.z = isMobile ? 10 : 8;
+    camera.position.z = isMobile ? 9 : 8; // Moved camera closer for mobile
     cameraRef.current = camera;
 
     // Renderer setup
@@ -89,7 +89,7 @@ const Globe: React.FC = () => {
     scene.add(bgGlow);
 
     // Create globe with size responsive to device
-    const globeSize = isMobile ? 1.8 : 2.0;
+    const globeSize = isMobile ? 2.3 : 2.0; // Increased size for mobile
     const globeGeometry = new THREE.SphereGeometry(globeSize, 64, 64);
     
     // Earth texture with dark theme
@@ -147,7 +147,7 @@ const Globe: React.FC = () => {
       const z = radius * Math.sin(phi) * Math.sin(theta);
       
       // Create an appropriately sized highlight based on device
-      const highlightSize = isMobile ? 0.12 : 0.15;
+      const highlightSize = isMobile ? 0.15 : 0.15; // Maintained size for visibility
       const highlightGeometry = new THREE.CircleGeometry(highlightSize, 32);
       
       // Set color based on location type

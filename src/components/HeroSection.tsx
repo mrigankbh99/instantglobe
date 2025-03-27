@@ -18,10 +18,10 @@ const HeroSection = () => {
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10 pt-5 md:pt-20 flex flex-col md:flex-row items-center">
-        {/* Globe Container - Only render at top for mobile */}
+        {/* Globe Container - Only render at top for mobile with increased height */}
         {isMobile && (
           <div className="w-full mb-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="w-full h-[250px] relative">
+            <div className="w-full h-[300px] relative">
               <div className="absolute inset-0">
                 <Globe />
               </div>
