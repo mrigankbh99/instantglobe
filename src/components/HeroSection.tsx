@@ -36,6 +36,11 @@ const HeroSection = () => {
       waitlistSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  //open the page in same tab
+  const launchApp = () => {
+    window.open('https://rootspay.vercel.app/', '_self')
+  }
   
   return (
     <section className="relative min-h-screen pt-20 overflow-hidden">
@@ -80,9 +85,9 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
             <Button 
               className="gradient-btn text-white rounded-xl px-6 py-5 sm:px-8 sm:py-6 text-lg font-medium transition-all duration-300 shadow-lg"
-              onClick={scrollToWaitlist}
+              onClick={launchApp}
             >
-              Join Waitlist
+              Launch App
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             
