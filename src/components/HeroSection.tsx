@@ -37,8 +37,9 @@ const HeroSection = () => {
     }
   };
 
+  //open the page in same tab
   const launchApp = () => {
-    window.open('https://rootspay.vercel.app/', '_blank')
+    window.open('https://rootspay.vercel.app/', '_self')
   }
   
   return (

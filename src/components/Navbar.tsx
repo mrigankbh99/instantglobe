@@ -27,7 +27,7 @@ const Navbar = () => {
   };
 
   const launchApp = () => {
-    window.open('https://rootspay.vercel.app/', '_blank')
+    window.open('https://rootspay.vercel.app/', '_self')
   }
 
   return (
@@ -104,9 +104,9 @@ const Navbar = () => {
             </a>
             <Button 
               className="w-full gradient-btn text-white rounded-xl py-2 shadow-lg"
-              onClick={scrollToWaitlist}
+              onClick={launchApp}
             >
-              Join Waitlist
+              Launch App
             </Button>
           </div>
         </div>
