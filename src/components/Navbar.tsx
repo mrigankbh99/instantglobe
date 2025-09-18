@@ -26,6 +26,10 @@ const Navbar = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const launchApp = () => {
+    window.open('https://rootspay.vercel.app/', '_blank')
+  }
+
   return (
     <header 
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -63,9 +67,9 @@ const Navbar = () => {
         <div className="hidden md:block">
           <Button 
             className="gradient-btn text-white rounded-xl px-6 py-2 transition-all duration-300 transform hover:scale-105 shadow-lg"
-            onClick={scrollToWaitlist}
+            onClick={launchApp}
           >
-            Join Waitlist
+            Launch App
           </Button>
         </div>
 
